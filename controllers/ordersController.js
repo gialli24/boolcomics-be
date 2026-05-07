@@ -25,10 +25,8 @@ const show = (req, res) => {
 }
 
 const create = (req, res) => {
-    const order = {
-        id: orders.length + 1
-    };
-    orders.push(order);
+    const order = req.body;
+
     res.json(order);
 }
 
