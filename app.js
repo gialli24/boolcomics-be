@@ -2,10 +2,15 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
+const cors = require('cors');
+
 app.use(express.static('public'));
 
 /* Body Parser */
 app.use(express.json());
+
+/* Cors middleware */
+app.use(cors());
 
 app.get('/', (req, res) => {
     res.send("Hello World");
