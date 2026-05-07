@@ -2,12 +2,17 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
+const cors = require('cors');
+
 const ordersRouter = require('./routers/orders');
 
 app.use(express.static('public'));
 
 /* Body Parser */
 app.use(express.json());
+
+/* Cors middleware */
+app.use(cors());
 
 app.use('/orders', ordersRouter);
 
