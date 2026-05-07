@@ -42,12 +42,22 @@ const show = (req, res) => {
 }
 
 const create = (req, res) => {
-    const order = req.body;
-    order.id = orders[orders.length - 1].id + 1;
+    const { first_name, last_name, email, status, total_price, shipping_address, billing_address } = req.body;
 
-    orders.push(order);
+    if (!first_name || !last_name || !email || !status || !total_price || !shipping_address || !billing_address) {
+        return res.status(400).json({ message: "Dati mancanti" });
+    }
 
-    res.json(order);
+    const sql = "INSERT INTO orders (first_name, last_name, email, status, total_price, shipping_address, billing_address) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+    connection.query(sql, [first_name, last_name, email, status, total_price, shipping_address, billing_address], (err, results) => {
+        if (err) return res.status(500).json("Internal Server Error");
+
+        res.status(201).json({
+            id: results.insertId,
+            message: "Ordine creato con successo"
+        });
+    });
 }
 
 const update = (req, res) => {
