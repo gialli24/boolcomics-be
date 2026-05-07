@@ -65,8 +65,6 @@ const destroy = (req, res) => {
 
     orders.splice(orders.indexOf(order), 1);
 
-    console.log(orders)
-
     res.json(order);
 }
 
