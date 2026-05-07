@@ -47,8 +47,13 @@ const update = (req, res) => {
 
 const destroy = (req, res) => {
     const id = parseInt(req.params.id);
-    const order = orders.filter(order => order.id !== id);
-    res.json(order);
+
+    const deleteOrder = orders.find(order => order.id === id);
+    orders.splice(orders.indexOf(deleteOrder), 1);
+
+    console.log(orders)
+
+    res.json(deleteOrder);
 }
 
 module.exports = { index, show, create, update, destroy };
