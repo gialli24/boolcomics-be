@@ -21,6 +21,10 @@ const show = (req, res) => {
     const id = parseInt(req.params.id);
     const order = orders.find(order => order.id === id);
 
+    if (!order) {
+        return res.status(404).json({ message: "Ordine non trovato" });
+    }
+
     res.json(order);
 }
 
@@ -38,6 +42,11 @@ const update = (req, res) => {
     const { first_name, last_name, email } = req.body;
 
     const order = orders.find(order => order.id === id);
+
+    if (!order) {
+        return res.status(404).json({ message: "Ordine non trovato" });
+    }
+
     order.first_name = first_name || order.first_name;
     order.last_name = last_name || order.first_name;
     order.email = email || order.first_name;
@@ -48,12 +57,17 @@ const update = (req, res) => {
 const destroy = (req, res) => {
     const id = parseInt(req.params.id);
 
-    const deleteOrder = orders.find(order => order.id === id);
-    orders.splice(orders.indexOf(deleteOrder), 1);
+    const order = orders.find(order => order.id === id);
+
+    if (!order) {
+        return res.status(404).json({ message: "Ordine non trovato" });
+    }
+
+    orders.splice(orders.indexOf(order), 1);
 
     console.log(orders)
 
-    res.json(deleteOrder);
+    res.json(order);
 }
 
 module.exports = { index, show, create, update, destroy };
