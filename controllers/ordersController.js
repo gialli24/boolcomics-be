@@ -39,8 +39,8 @@ const update = (req, res) => {
 
 const destroy = (req, res) => {
     const id = parseInt(req.params.id);
-    orders = orders.filter(order => order.id !== id);
-    res.json(orders);
+    const order = orders.filter(order => order.id !== id);
+    res.json(order);
 }
 
 module.exports = { index, show, create, update, destroy };
