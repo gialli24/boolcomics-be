@@ -62,19 +62,18 @@ const create = (req, res) => {
 
 const update = (req, res) => {
     const id = parseInt(req.params.id);
-    const { first_name, last_name, email } = req.body;
-
-    const order = orders.find(order => order.id === id);
-
-    if (!order) {
-        return res.status(404).json({ message: "Ordine non trovato" });
-    }
-
-    order.first_name = first_name || order.first_name;
-    order.last_name = last_name || order.first_name;
-    order.email = email || order.first_name;
-
-    res.json(order);
+    const { first_name, last_name, email, status, total_price, shipping_address, billing_address } = req.body;
+    const sql = `UPDATE orders SET first_name = ?, last_name = ?, email = ?, status = ?, total_price = ?, shipping_address = ?, billing_address = ? WHERE id = ?`
+    /* UPDATE `boolcomics`.`orders` SET `first_name` = 'luca', `last_name` = 'sss', `email` = 'paolo.viola@ecmail.cow', `status` = 'pendi', `total_price` = '10.3', `shipping_address` = '52', `billing_address` = '53' WHERE (`id` = '5'); */
+    
+    connection.query(sql, [first_name, last_name, email, status, total_price, shipping_address, billing_address, id], (err, results) => {
+        if(err) return res.status(500).json("Internal Server Error")
+        
+        if(results.affectedRows === 0) return res.status(404).json({error: "Nessun elemento da aggiornare"})
+        
+        res.send({message: "Ordine aggiornato con successo"})
+    })
+    
 }
 
 const destroy = (req, res) => {
