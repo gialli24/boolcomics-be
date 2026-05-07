@@ -29,15 +29,17 @@ let products = [
 ];
 
 
-// INDEX 
+// INDEX
 const index = (req, res) => {
     res.json(products);
 };
 
 
-// SHOW 
+// SHOW
 const show = (req, res) => {
-    const product = products.find(p => p.id === req.params.id);
+    const id = parseInt(req.params.id);
+
+    const product = products.find(p => parseInt(p.id) === id);
 
     if (!product) {
         return res.status(404).json({ message: "Prodotto non trovato" });
@@ -47,7 +49,7 @@ const show = (req, res) => {
 };
 
 
-// CREATE 
+// CREATE
 const create = (req, res) => {
     const newProduct = {
         id: Date.now().toString(),
@@ -65,9 +67,11 @@ const create = (req, res) => {
 };
 
 
-// UPDATE 
+// UPDATE
 const update = (req, res) => {
-    const product = products.find(p => p.id === req.params.id);
+    const id = parseInt(req.params.id);
+
+    const product = products.find(p => parseInt(p.id) === id);
 
     if (!product) {
         return res.status(404).json({ message: "Prodotto non trovato" });
@@ -84,15 +88,17 @@ const update = (req, res) => {
 };
 
 
-// DESTROY 
+// DESTROY
 const destroy = (req, res) => {
-    products = products.filter(p => p.id !== req.params.id);
+    const id = parseInt(req.params.id);
+
+    products = products.filter(p => parseInt(p.id) !== id);
 
     res.json({ message: "Prodotto eliminato" });
 };
 
 
-
+// EXPORT
 module.exports = {
     index,
     show,
