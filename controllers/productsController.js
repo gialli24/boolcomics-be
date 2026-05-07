@@ -29,14 +29,14 @@ let products = [
 ];
 
 
-// GET tutti i prodotti
-const getAllProducts = (req, res) => {
+// INDEX 
+const index = (req, res) => {
     res.json(products);
 };
 
 
-// GET singolo prodotto
-const getProductById = (req, res) => {
+// SHOW 
+const show = (req, res) => {
     const product = products.find(p => p.id === req.params.id);
 
     if (!product) {
@@ -47,8 +47,8 @@ const getProductById = (req, res) => {
 };
 
 
-// CREATE prodotto
-const createProduct = (req, res) => {
+// CREATE 
+const create = (req, res) => {
     const newProduct = {
         id: Date.now().toString(),
         name: req.body.name,
@@ -65,8 +65,8 @@ const createProduct = (req, res) => {
 };
 
 
-// UPDATE prodotto
-const updateProduct = (req, res) => {
+// UPDATE 
+const update = (req, res) => {
     const product = products.find(p => p.id === req.params.id);
 
     if (!product) {
@@ -84,19 +84,19 @@ const updateProduct = (req, res) => {
 };
 
 
-// DELETE prodotto
-const deleteProduct = (req, res) => {
+// DESTROY 
+const destroy = (req, res) => {
     products = products.filter(p => p.id !== req.params.id);
 
     res.json({ message: "Prodotto eliminato" });
 };
 
 
-// EXPORT
+
 module.exports = {
-    getAllProducts,
-    getProductById,
-    createProduct,
-    updateProduct,
-    deleteProduct
+    index,
+    show,
+    create,
+    update,
+    destroy
 };
