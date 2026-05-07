@@ -1,3 +1,5 @@
+const connection = require('../database/db');
+
 const orders = [
     {
         id: 1,
@@ -14,7 +16,15 @@ const orders = [
 ]
 
 const index = (req, res) => {
-    res.json(orders);
+    const sql = "SELECT * FROM orders";
+
+    connection.query(sql, (err, results) => {
+        if (err) return res.status(500).json("Internal Server Error");
+
+        if (results.length === 0) return res.status(404).json({ message: "Nessun ordine trovato" });
+
+        res.json(results);
+    });
 }
 
 const show = (req, res) => {
