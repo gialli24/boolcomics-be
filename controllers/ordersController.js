@@ -67,15 +67,15 @@ const update = (req, res) => {
 const destroy = (req, res) => {
     const id = parseInt(req.params.id);
 
-    const order = orders.find(order => order.id === id);
+    const sql = `DELETE FROM orders WHERE id = ?`
+    connection.query(sql, [id], (err, results) => {
+        if(err) return res.status(500).json({error: 'Database internal error'});
+        if (results.length === 0) return res.status(404).json({ error: 'Order Not found' })
+        
+            res.json({id})
+    })
 
-    if (!order) {
-        return res.status(404).json({ message: "Ordine non trovato" });
-    }
-
-    orders.splice(orders.indexOf(order), 1);
-
-    res.json(order);
-}
+    
+};
 
 module.exports = { index, show, create, update, destroy };
