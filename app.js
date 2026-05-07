@@ -6,6 +6,9 @@ const ordersRouter = require('./routers/orders');
 
 app.use(express.static('public'));
 
+/* Body Parser */
+app.use(express.json());
+
 app.use('/orders', ordersRouter);
 
 app.get('/', (req, res) => {
