@@ -17,15 +17,11 @@ const index = (req, res) => {
 
 // SHOW 
 const show = (req, res) => {
-    const id = parseInt(req.params.id);
+    const slug = req.params.slug;
 
-    if (isNaN(id)) {
-        return res.status(400).json({ message: "ID non valido" });
-    }
+    const sql = 'SELECT * FROM products WHERE slug = ?';
 
-    const sql = 'SELECT * FROM products WHERE id = ?';
-
-    connection.query(sql, [id], (err, results) => {
+    connection.query(sql, [slug], (err, results) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }

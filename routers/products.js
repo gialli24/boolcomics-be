@@ -15,7 +15,7 @@ const {
 router.get('/', index);
 
 // GET singolo prodotto
-router.get('/:id', show);
+router.get('/:slug', show);
 
 // CREATE prodotto
 router.post('/', create);

@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS `products` (
     original_price DECIMAL(5,2) NULL,
     stock_quantity INT NOT NULL DEFAULT 0,
     image_url VARCHAR(255) NULL,
+    slug VARCHAR(100) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -89,17 +90,17 @@ INSERT INTO `categories` (`name`, `slug`) VALUES
 ('Avventura', 'avventura');
 
 -- Populating `products` table
-INSERT INTO `products` (`name`, `description`, `genre`, `author`, `release_date`, `publisher`, `binding`, `ean`, `price`, `original_price`, `stock_quantity`, `image_url`) VALUES 
-('Naruto Vol. 1', 'L''inizio del cammino di Naruto Uzumaki per diventare Hokage.', 'Manga', 'Masashi Kishimoto', '1999-09-21', 'Planet Manga', 'Brossurato', '9788863041934', 5.20, 5.20, 150, 'https://example.com/naruto1.jpg'),
-('Spider-Man: Blue', 'Peter Parker ricorda il suo primo grande amore, Gwen Stacy.', 'Supereroi', 'Jeph Loeb, Tim Sale', '2002-07-01', 'Panini Comics', 'Cartonato', '9788891234567', 19.00, 21.00, 40, 'https://example.com/spidermanblue.jpg'),
-('V for Vendetta', 'In una Gran Bretagna distopica, un misterioso rivoluzionario combatte il regime.', 'Graphic Novel', 'Alan Moore, David Lloyd', '1982-05-01', 'DC Comics', 'Cartonato', '9781401208417', 20.00, 20.00, 60, 'https://example.com/vvendetta.jpg'),
-('Berserk Vol. 1', 'Le avventure di Gatsu, il guerriero nero, in un mondo dark fantasy.', 'Manga', 'Kentaro Miura', '1990-11-26', 'Panini Comics', 'Brossurato', '9788863467650', 5.20, 5.20, 200, 'https://example.com/berserk1.jpg'),
-('Dragon Ball Vol. 1', 'Goku e Bulma partono alla ricerca delle sette Sfere del Drago.', 'Manga', 'Akira Toriyama', '1984-11-20', 'Star Comics', 'Brossurato', '9788822605413', 4.30, 4.30, 300, 'https://example.com/dragonball1.jpg'),
-('Sandman Vol. 1', 'Il ritorno di Morfeo, il signore dei sogni, nel suo regno.', 'Fantasy', 'Neil Gaiman', '1989-01-01', 'DC Comics', 'Cartonato', '9781401225759', 25.00, 30.00, 25, 'https://example.com/sandman1.jpg'),
-('Kingdom Come', 'Una lotta epica tra la vecchia e la nuova generazione di supereroi.', 'Supereroi', 'Mark Waid, Alex Ross', '1996-05-01', 'DC Comics', 'Cartonato', '9781401220341', 30.00, 35.00, 20, 'https://example.com/kingdomcome.jpg'),
-('Blankets', 'Un''autobiografia a fumetti sulla crescita e il primo amore.', 'Graphic Novel', 'Craig Thompson', '2003-01-01', 'Rizzoli Lizard', 'Brossurato', '9788817011402', 24.00, 24.00, 35, 'https://example.com/blankets.jpg'),
-('Death Note Vol. 1', 'Light Yagami trova un quaderno in grado di uccidere chiunque.', 'Manga', 'Tsugumi Ohba, Takeshi Obata', '2003-12-01', 'Planet Manga', 'Brossurato', '9788863461238', 5.20, 5.20, 120, 'https://example.com/deathnote1.jpg'),
-('Black Hammer Vol. 1', 'Eroi dimenticati vivono in una fattoria misteriosa.', 'Supereroi', 'Jeff Lemire, Dean Ormston', '2016-07-20', 'Bao Publishing', 'Brossurato', '9788865438466', 18.00, 18.00, 45, 'https://example.com/blackhammer1.jpg');
+INSERT INTO `products` (`name`, `description`, `genre`, `author`, `release_date`, `publisher`, `binding`, `ean`, `price`, `original_price`, `stock_quantity`, `image_url`, `slug`) VALUES 
+('Naruto Vol. 1', 'L''inizio del cammino di Naruto Uzumaki per diventare Hokage.', 'Manga', 'Masashi Kishimoto', '1999-09-21', 'Planet Manga', 'Brossurato', '9788863041934', 5.20, 5.20, 150, 'https://example.com/naruto1.jpg', 'naruto-vol-1'),
+('Spider-Man: Blue', 'Peter Parker ricorda il suo primo grande amore, Gwen Stacy.', 'Supereroi', 'Jeph Loeb, Tim Sale', '2002-07-01', 'Panini Comics', 'Cartonato', '9788891234567', 19.00, 21.00, 40, 'https://example.com/spidermanblue.jpg', 'spider-man-blue'),
+('V for Vendetta', 'In una Gran Bretagna distopica, un misterioso rivoluzionario combatte il regime.', 'Graphic Novel', 'Alan Moore, David Lloyd', '1982-05-01', 'DC Comics', 'Cartonato', '9781401208417', 20.00, 20.00, 60, 'https://example.com/vvendetta.jpg', 'v-for-vendetta'),
+('Berserk Vol. 1', 'Le avventure di Gatsu, il guerriero nero, in un mondo dark fantasy.', 'Manga', 'Kentaro Miura', '1990-11-26', 'Panini Comics', 'Brossurato', '9788863467650', 5.20, 5.20, 200, 'https://example.com/berserk1.jpg', 'berserk-vol-1'),
+('Dragon Ball Vol. 1', 'Goku e Bulma partono alla ricerca delle sette Sfere del Drago.', 'Manga', 'Akira Toriyama', '1984-11-20', 'Star Comics', 'Brossurato', '9788822605413', 4.30, 4.30, 300, 'https://example.com/dragonball1.jpg', 'dragon-ball-vol-1'),
+('Sandman Vol. 1', 'Il ritorno di Morfeo, il signore dei sogni, nel suo regno.', 'Fantasy', 'Neil Gaiman', '1989-01-01', 'DC Comics', 'Cartonato', '9781401225759', 25.00, 30.00, 25, 'https://example.com/sandman1.jpg', 'sandman-vol-1'),
+('Kingdom Come', 'Una lotta epica tra la vecchia e la nuova generazione di supereroi.', 'Supereroi', 'Mark Waid, Alex Ross', '1996-05-01', 'DC Comics', 'Cartonato', '9781401220341', 30.00, 35.00, 20, 'https://example.com/kingdomcome.jpg', 'kingdom-come'),
+('Blankets', 'Un''autobiografia a fumetti sulla crescita e il primo amore.', 'Graphic Novel', 'Craig Thompson', '2003-01-01', 'Rizzoli Lizard', 'Brossurato', '9788817011402', 24.00, 24.00, 35, 'https://example.com/blankets.jpg', 'blankets'),
+('Death Note Vol. 1', 'Light Yagami trova un quaderno in grado di uccidere chiunque.', 'Manga', 'Tsugumi Ohba, Takeshi Obata', '2003-12-01', 'Planet Manga', 'Brossurato', '9788863461238', 5.20, 5.20, 120, 'https://example.com/deathnote1.jpg', 'death-note-vol-1'),
+('Black Hammer Vol. 1', 'Eroi dimenticati vivono in una fattoria misteriosa.', 'Supereroi', 'Jeff Lemire, Dean Ormston', '2016-07-20', 'Bao Publishing', 'Brossurato', '9788865438466', 18.00, 18.00, 45, 'https://example.com/blackhammer1.jpg', 'black-hammer-vol-1');
 
 -- Populating `category_products` table
 INSERT INTO `category_products` (`product_id`, `category_id`) VALUES 
@@ -124,11 +125,11 @@ INSERT INTO `orders` (`first_name`, `last_name`, `email`, `status`, `total_price
 
 -- Populating `order_items` table
 INSERT INTO `order_items` (`order_id`, `product_id`, `quantity`, `price_at_purchase`) VALUES 
-(6, 10, 1, 18.00), -- Ordine 3: Black Hammer
-(7, 8, 2, 20.00),  -- Ordine 4: V for Vendetta (2 copie)
-(8, 5, 1, 18.00), -- Ordine 5: Black Hammer
-(9, 2, 1, 25.00), -- Ordine 6: Sandman
-(10, 9, 2, 5.20);   -- Ordine 7: Berserk (2 copie)
+(1, 10, 1, 18.00), -- Ordine 3: Black Hammer
+(2, 8, 2, 20.00),  -- Ordine 4: V for Vendetta (2 copie)
+(3, 5, 1, 18.00), -- Ordine 5: Black Hammer
+(4, 2, 1, 25.00), -- Ordine 6: Sandman
+(5, 9, 2, 5.20);   -- Ordine 7: Berserk (2 copie)
 
 -- Populating `discount_codes` table
 INSERT INTO `discount_codes` (`code`, `discount_percentage`, `valid_from`, `valid_to`, `is_active`) VALUES
