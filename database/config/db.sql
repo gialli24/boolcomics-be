@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS `category_products` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT NOT NULL,
     product_id INT NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES categories(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS `addresses` (
@@ -64,10 +64,9 @@ CREATE TABLE IF NOT EXISTS `order_items` (
     product_id INT NOT NULL,
     quantity INT NOT NULL,
     price_at_purchase DECIMAL(5,2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
-
 
 CREATE TABLE IF NOT EXISTS `discount_codes` (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -124,11 +123,11 @@ INSERT INTO `orders` (`first_name`, `last_name`, `email`, `status`, `total_price
 
 -- Populating `order_items` table
 INSERT INTO `order_items` (`order_id`, `product_id`, `quantity`, `price_at_purchase`) VALUES 
-(6, 10, 1, 18.00), -- Ordine 3: Black Hammer
-(7, 8, 2, 20.00),  -- Ordine 4: V for Vendetta (2 copie)
-(8, 5, 1, 18.00), -- Ordine 5: Black Hammer
-(9, 2, 1, 25.00), -- Ordine 6: Sandman
-(10, 9, 2, 5.20);   -- Ordine 7: Berserk (2 copie)
+(1, 10, 1, 18.00), -- Ordine 3: Black Hammer
+(2, 8, 2, 20.00),  -- Ordine 4: V for Vendetta (2 copie)
+(3, 5, 1, 18.00), -- Ordine 5: Black Hammer
+(4, 2, 1, 25.00), -- Ordine 6: Sandman
+(5, 9, 2, 5.20);   -- Ordine 7: Berserk (2 copie)
 
 -- Populating `discount_codes` table
 INSERT INTO `discount_codes` (`code`, `discount_percentage`, `valid_from`, `valid_to`, `is_active`) VALUES

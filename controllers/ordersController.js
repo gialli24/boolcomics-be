@@ -81,14 +81,49 @@ const update = (req, res) => {
 
 }
 
+const modify = (req, res) => {
+    const id = parseInt(req.params.id);
+    let { first_name, last_name, email, status, total_price, shipping_address, billing_address } = req.body;
+
+    const originalSql = `SELECT * FROM orders WHERE id = ?`;
+
+    connection.query(originalSql, [id], (err, results) => {
+        if (err) return res.status(500).json("Internal Server Error");
+
+        if (results.length === 0) return res.status(404).json({ error: "Elemento non trovato" });
+
+        const originalData = results[0];
+
+        first_name = first_name || originalData.first_name;
+        last_name = last_name || originalData.last_name;
+        email = email || originalData.email;
+        status = status || originalData.status;
+        total_price = total_price || originalData.total_price;
+        shipping_address = shipping_address || originalData.shipping_address;
+        billing_address = billing_address || originalData.billing_address;
+
+        const modifySql = `UPDATE orders SET first_name = ?, last_name = ?, email = ?, status = ?, total_price = ?, shipping_address = ?, billing_address = ? WHERE id = ?`;
+
+        connection.query(modifySql, [first_name, last_name, email, status, total_price, shipping_address, billing_address, id], (err, results) => {
+            if (err) return res.status(500).json("Internal Server Error");
+
+            if (results.length === 0) return res.status(404).json({ error: "Elemento non trovato" });
+
+            res.send({ message: "Ordine modificato con successo" });
+        });
+
+    });
+
+}
+
 const destroy = (req, res) => {
     const id = parseInt(req.params.id);
 
     const sql = `DELETE FROM orders WHERE id = ?`;
 
     connection.query(sql, [id], (err, results) => {
-        if (err) return res.status(500).json({ error: 'Database internal error' });
-        if (results.length === 0) return res.status(404).json({ error: 'Order Not found' })
+        if (err) return res.status(500).json({ error: 'Database internal error' + err });
+        if (results.affectedRows === 0) return res.status(404).json({ error: 'Order Not found' })
 
         res.json({ id })
     });
@@ -96,4 +131,4 @@ const destroy = (req, res) => {
 
 };
 
-module.exports = { index, show, create, update, destroy };
+module.exports = { index, show, create, update, modify, destroy };
