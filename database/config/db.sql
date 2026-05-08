@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `boolcomics`;
-
 USE `boolcomics`;
 
+-- 1. PRODUCTS
 CREATE TABLE IF NOT EXISTS `products` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -21,21 +21,24 @@ CREATE TABLE IF NOT EXISTS `products` (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-
+-- 2. CATEGORIES
 CREATE TABLE IF NOT EXISTS `categories` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     slug VARCHAR(50) NOT NULL
 );
 
+-- 3. CATEGORY_PRODUCTS (Pivot Table)
 CREATE TABLE IF NOT EXISTS `category_products` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT NOT NULL,
     product_id INT NOT NULL,
-    FOREIGN KEY (category_id) REFERENCES categories(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    -- Added CASCADE to both so if a product OR category is deleted, the link is removed
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
+-- 4. ADDRESSES
 CREATE TABLE IF NOT EXISTS `addresses` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     street VARCHAR(255) NOT NULL,
@@ -45,6 +48,7 @@ CREATE TABLE IF NOT EXISTS `addresses` (
     country VARCHAR(50) NOT NULL
 );
 
+-- 5. ORDERS
 CREATE TABLE IF NOT EXISTS `orders` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -55,21 +59,26 @@ CREATE TABLE IF NOT EXISTS `orders` (
     shipping_address INT NOT NULL,
     billing_address INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (shipping_address) REFERENCES addresses(id),
-    FOREIGN KEY (billing_address) REFERENCES addresses(id)
+    -- Added CASCADE here: if an address is deleted, the order is removed
+    -- (Note: In real-world apps, you might prefer 'SET NULL' for addresses to keep order history)
+    FOREIGN KEY (shipping_address) REFERENCES addresses(id) ON DELETE CASCADE,
+    FOREIGN KEY (billing_address) REFERENCES addresses(id) ON DELETE CASCADE
 );
 
+-- 6. ORDER_ITEMS
 CREATE TABLE IF NOT EXISTS `order_items` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,
     price_at_purchase DECIMAL(5,2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES orders(id),
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    -- Crucial: if order is deleted, items are deleted. 
+    -- If product is deleted, items are deleted.
+    FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
-
+-- 7. DISCOUNT_CODES
 CREATE TABLE IF NOT EXISTS `discount_codes` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(10) NOT NULL UNIQUE,
