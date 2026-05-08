@@ -37,19 +37,19 @@ const create = (req, res) => {
 
     connection.query(sql, [first_name, last_name, email, status, total_price, shipping_address, billing_address], (err, results) => {
         if (err) return res.status(500).json("Internal Server Error");
-
-            const newSql = `SELECT * FROM orders ORDER BY id DESC LIMIT 1`
+            
+            const newSql = `SELECT * FROM orders ORDER BY id DESC LIMIT 1`;
             connection.query(newSql, (err, newResults) => {
                 if (err) return res.status(500).json("Internal Server Error");
                 console.log(newResults);
 
-                if(newResults.length === 0) return res.status(404).json({message: "Ordine non aggiunto"})
+                if(newResults.length === 0) return res.status(404).json({message: "Ordine non trovato"});
                 
                 res.json({ 
                     message: "Elemento aggiunto con successo",
                     newElement: newResults[0]
-                })
-            } )
+                });
+            });
         
     });
 }
