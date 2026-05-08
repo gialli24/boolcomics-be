@@ -2,25 +2,29 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
-const productRoutes = require('./routers/products');
-
-app.use(express.json());
 const cors = require('cors');
 
+/* Routers */
 const ordersRouter = require('./routers/orders');
+const productRoutes = require('./routers/products');
 
+/* Public Assets middleware */
 app.use(express.static('public'));
 
+/* Body Parser middleware */
+app.use(express.json());
+
+/* Cors middleware */
 app.use(cors());
 
+/* Routers redirects */
 app.use('/orders', ordersRouter);
-
-app.get('/', (req, res) => {
-res.send("Hello World");
-});
-
 app.use('/products', productRoutes);
 
+app.get('/', (req, res) => {
+    res.send("Hello World");
+});
+
 app.listen(PORT, () => {
-console.log(`Server in ascolto su http://localhost:${PORT}`);
+    console.log(`Server in ascolto su http://localhost:${PORT}`);
 });
