@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS `boolcomics`;
-
 USE `boolcomics`;
 
+-- 1. PRODUCTS
 CREATE TABLE IF NOT EXISTS `products` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -16,25 +16,29 @@ CREATE TABLE IF NOT EXISTS `products` (
     original_price DECIMAL(5,2) NULL,
     stock_quantity INT NOT NULL DEFAULT 0,
     image_url VARCHAR(255) NULL,
+    slug VARCHAR(100) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-
+-- 2. CATEGORIES
 CREATE TABLE IF NOT EXISTS `categories` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     slug VARCHAR(50) NOT NULL
 );
 
+-- 3. CATEGORY_PRODUCTS (Pivot Table)
 CREATE TABLE IF NOT EXISTS `category_products` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT NOT NULL,
     product_id INT NOT NULL,
+    -- Added CASCADE to both so if a product OR category is deleted, the link is removed
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
+-- 4. ADDRESSES
 CREATE TABLE IF NOT EXISTS `addresses` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     street VARCHAR(255) NOT NULL,
@@ -44,6 +48,7 @@ CREATE TABLE IF NOT EXISTS `addresses` (
     country VARCHAR(50) NOT NULL
 );
 
+-- 5. ORDERS
 CREATE TABLE IF NOT EXISTS `orders` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -54,20 +59,26 @@ CREATE TABLE IF NOT EXISTS `orders` (
     shipping_address INT NOT NULL,
     billing_address INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (shipping_address) REFERENCES addresses(id),
-    FOREIGN KEY (billing_address) REFERENCES addresses(id)
+    -- Added CASCADE here: if an address is deleted, the order is removed
+    -- (Note: In real-world apps, you might prefer 'SET NULL' for addresses to keep order history)
+    FOREIGN KEY (shipping_address) REFERENCES addresses(id) ON DELETE CASCADE,
+    FOREIGN KEY (billing_address) REFERENCES addresses(id) ON DELETE CASCADE
 );
 
+-- 6. ORDER_ITEMS
 CREATE TABLE IF NOT EXISTS `order_items` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,
     price_at_purchase DECIMAL(5,2) NOT NULL,
+    -- Crucial: if order is deleted, items are deleted. 
+    -- If product is deleted, items are deleted.
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
 
+-- 7. DISCOUNT_CODES
 CREATE TABLE IF NOT EXISTS `discount_codes` (
     id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(10) NOT NULL UNIQUE,
@@ -88,17 +99,17 @@ INSERT INTO `categories` (`name`, `slug`) VALUES
 ('Avventura', 'avventura');
 
 -- Populating `products` table
-INSERT INTO `products` (`name`, `description`, `genre`, `author`, `release_date`, `publisher`, `binding`, `ean`, `price`, `original_price`, `stock_quantity`, `image_url`) VALUES 
-('Naruto Vol. 1', 'L''inizio del cammino di Naruto Uzumaki per diventare Hokage.', 'Manga', 'Masashi Kishimoto', '1999-09-21', 'Planet Manga', 'Brossurato', '9788863041934', 5.20, 5.20, 150, 'https://example.com/naruto1.jpg'),
-('Spider-Man: Blue', 'Peter Parker ricorda il suo primo grande amore, Gwen Stacy.', 'Supereroi', 'Jeph Loeb, Tim Sale', '2002-07-01', 'Panini Comics', 'Cartonato', '9788891234567', 19.00, 21.00, 40, 'https://example.com/spidermanblue.jpg'),
-('V for Vendetta', 'In una Gran Bretagna distopica, un misterioso rivoluzionario combatte il regime.', 'Graphic Novel', 'Alan Moore, David Lloyd', '1982-05-01', 'DC Comics', 'Cartonato', '9781401208417', 20.00, 20.00, 60, 'https://example.com/vvendetta.jpg'),
-('Berserk Vol. 1', 'Le avventure di Gatsu, il guerriero nero, in un mondo dark fantasy.', 'Manga', 'Kentaro Miura', '1990-11-26', 'Panini Comics', 'Brossurato', '9788863467650', 5.20, 5.20, 200, 'https://example.com/berserk1.jpg'),
-('Dragon Ball Vol. 1', 'Goku e Bulma partono alla ricerca delle sette Sfere del Drago.', 'Manga', 'Akira Toriyama', '1984-11-20', 'Star Comics', 'Brossurato', '9788822605413', 4.30, 4.30, 300, 'https://example.com/dragonball1.jpg'),
-('Sandman Vol. 1', 'Il ritorno di Morfeo, il signore dei sogni, nel suo regno.', 'Fantasy', 'Neil Gaiman', '1989-01-01', 'DC Comics', 'Cartonato', '9781401225759', 25.00, 30.00, 25, 'https://example.com/sandman1.jpg'),
-('Kingdom Come', 'Una lotta epica tra la vecchia e la nuova generazione di supereroi.', 'Supereroi', 'Mark Waid, Alex Ross', '1996-05-01', 'DC Comics', 'Cartonato', '9781401220341', 30.00, 35.00, 20, 'https://example.com/kingdomcome.jpg'),
-('Blankets', 'Un''autobiografia a fumetti sulla crescita e il primo amore.', 'Graphic Novel', 'Craig Thompson', '2003-01-01', 'Rizzoli Lizard', 'Brossurato', '9788817011402', 24.00, 24.00, 35, 'https://example.com/blankets.jpg'),
-('Death Note Vol. 1', 'Light Yagami trova un quaderno in grado di uccidere chiunque.', 'Manga', 'Tsugumi Ohba, Takeshi Obata', '2003-12-01', 'Planet Manga', 'Brossurato', '9788863461238', 5.20, 5.20, 120, 'https://example.com/deathnote1.jpg'),
-('Black Hammer Vol. 1', 'Eroi dimenticati vivono in una fattoria misteriosa.', 'Supereroi', 'Jeff Lemire, Dean Ormston', '2016-07-20', 'Bao Publishing', 'Brossurato', '9788865438466', 18.00, 18.00, 45, 'https://example.com/blackhammer1.jpg');
+INSERT INTO `products` (`name`, `description`, `genre`, `author`, `release_date`, `publisher`, `binding`, `ean`, `price`, `original_price`, `stock_quantity`, `image_url`, `slug`) VALUES 
+('Naruto Vol. 1', 'L''inizio del cammino di Naruto Uzumaki per diventare Hokage.', 'Manga', 'Masashi Kishimoto', '1999-09-21', 'Planet Manga', 'Brossurato', '9788863041934', 5.20, 5.20, 150, 'https://example.com/naruto1.jpg', 'naruto-vol-1'),
+('Spider-Man: Blue', 'Peter Parker ricorda il suo primo grande amore, Gwen Stacy.', 'Supereroi', 'Jeph Loeb, Tim Sale', '2002-07-01', 'Panini Comics', 'Cartonato', '9788891234567', 19.00, 21.00, 40, 'https://example.com/spidermanblue.jpg', 'spider-man-blue'),
+('V for Vendetta', 'In una Gran Bretagna distopica, un misterioso rivoluzionario combatte il regime.', 'Graphic Novel', 'Alan Moore, David Lloyd', '1982-05-01', 'DC Comics', 'Cartonato', '9781401208417', 20.00, 20.00, 60, 'https://example.com/vvendetta.jpg', 'v-for-vendetta'),
+('Berserk Vol. 1', 'Le avventure di Gatsu, il guerriero nero, in un mondo dark fantasy.', 'Manga', 'Kentaro Miura', '1990-11-26', 'Panini Comics', 'Brossurato', '9788863467650', 5.20, 5.20, 200, 'https://example.com/berserk1.jpg', 'berserk-vol-1'),
+('Dragon Ball Vol. 1', 'Goku e Bulma partono alla ricerca delle sette Sfere del Drago.', 'Manga', 'Akira Toriyama', '1984-11-20', 'Star Comics', 'Brossurato', '9788822605413', 4.30, 4.30, 300, 'https://example.com/dragonball1.jpg', 'dragon-ball-vol-1'),
+('Sandman Vol. 1', 'Il ritorno di Morfeo, il signore dei sogni, nel suo regno.', 'Fantasy', 'Neil Gaiman', '1989-01-01', 'DC Comics', 'Cartonato', '9781401225759', 25.00, 30.00, 25, 'https://example.com/sandman1.jpg', 'sandman-vol-1'),
+('Kingdom Come', 'Una lotta epica tra la vecchia e la nuova generazione di supereroi.', 'Supereroi', 'Mark Waid, Alex Ross', '1996-05-01', 'DC Comics', 'Cartonato', '9781401220341', 30.00, 35.00, 20, 'https://example.com/kingdomcome.jpg', 'kingdom-come'),
+('Blankets', 'Un''autobiografia a fumetti sulla crescita e il primo amore.', 'Graphic Novel', 'Craig Thompson', '2003-01-01', 'Rizzoli Lizard', 'Brossurato', '9788817011402', 24.00, 24.00, 35, 'https://example.com/blankets.jpg', 'blankets'),
+('Death Note Vol. 1', 'Light Yagami trova un quaderno in grado di uccidere chiunque.', 'Manga', 'Tsugumi Ohba, Takeshi Obata', '2003-12-01', 'Planet Manga', 'Brossurato', '9788863461238', 5.20, 5.20, 120, 'https://example.com/deathnote1.jpg', 'death-note-vol-1'),
+('Black Hammer Vol. 1', 'Eroi dimenticati vivono in una fattoria misteriosa.', 'Supereroi', 'Jeff Lemire, Dean Ormston', '2016-07-20', 'Bao Publishing', 'Brossurato', '9788865438466', 18.00, 18.00, 45, 'https://example.com/blackhammer1.jpg', 'black-hammer-vol-1');
 
 -- Populating `category_products` table
 INSERT INTO `category_products` (`product_id`, `category_id`) VALUES 
