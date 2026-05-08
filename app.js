@@ -9,7 +9,6 @@ const cors = require('cors');
 
 app.use(express.static('public'));
 
-/* Cors middleware */
 app.use(cors());
 
 app.get('/', (req, res) => {

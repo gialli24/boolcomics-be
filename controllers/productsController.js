@@ -1,69 +1,92 @@
-let products = [
-    {
-        id: "1",
-        name: "Naruto Vol. 1",
-        description: "L'inizio del cammino di Naruto Uzumaki.",
-        genre: "Manga",
-        author: "Masashi Kishimoto",
-        price: 5.20,
-        stock_quantity: 150
-    },
-    {
-        id: "2",
-        name: "Berserk Vol. 1",
-        description: "Le avventure del guerriero nero Gatsu.",
-        genre: "Dark Fantasy",
-        author: "Kentaro Miura",
-        price: 6.50,
-        stock_quantity: 80
-    },
-    {
-        id: "3",
-        name: "Spider-Man: Blue",
-        description: "Peter Parker ricorda Gwen Stacy.",
-        genre: "Supereroi",
-        author: "Jeph Loeb",
-        price: 19.00,
-        stock_quantity: 40
-    }
-];
+const connection = require('../database/db');
 
 
-// INDEX
+// INDEX 
 const index = (req, res) => {
-    res.json(products);
+    const sql = 'SELECT * FROM products';
+
+    connection.query(sql, (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        res.json(results);
+    });
 };
 
 
-// SHOW
+// SHOW 
 const show = (req, res) => {
     const id = parseInt(req.params.id);
 
-    const product = products.find(p => parseInt(p.id) === id);
-
-    if (!product) {
-        return res.status(404).json({ message: "Prodotto non trovato" });
+    if (isNaN(id)) {
+        return res.status(400).json({ message: "ID non valido" });
     }
 
-    res.json(product);
+    const sql = 'SELECT * FROM products WHERE id = ?';
+
+    connection.query(sql, [id], (err, results) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        if (results.length === 0) {
+            return res.status(404).json({ message: "Prodotto non trovato" });
+        }
+
+        res.json(results[0]);
+    });
 };
 
 
-// CREATE
+// CREATE 
 const create = (req, res) => {
-    const newProduct = {
-        id: Date.now().toString(),
-        name: req.body.name,
-        description: req.body.description,
-        genre: req.body.genre,
-        author: req.body.author,
-        price: req.body.price,
-        stock_quantity: req.body.stock_quantity || 0
-    };
+    const {
+        name,
+        description,
+        genre,
+        author,
+        release_date,
+        publisher,
+        binding,
+        ean,
+        price,
+        original_price,
+        stock_quantity,
+        image_url
+    } = req.body;
 
-    products.push(newProduct);
+    const sql = `
+        INSERT INTO products 
+        (name, description, genre, author, release_date, publisher, binding, ean, price, original_price, stock_quantity, image_url)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
-    res.status(201).json(newProduct);
+    const values = [
+        name,
+        description,
+        genre,
+        author,
+        release_date,
+        publisher,
+        binding,
+        ean,
+        price,
+        original_price,
+        stock_quantity,
+        image_url
+    ];
+
+    connection.query(sql, values, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        res.status(201).json({
+            message: "Prodotto creato",
+            id: result.insertId
+        });
+    });
 };
 
 
@@ -71,20 +94,52 @@ const create = (req, res) => {
 const update = (req, res) => {
     const id = parseInt(req.params.id);
 
-    const product = products.find(p => parseInt(p.id) === id);
-
-    if (!product) {
-        return res.status(404).json({ message: "Prodotto non trovato" });
+    if (isNaN(id)) {
+        return res.status(400).json({ message: "ID non valido" });
     }
 
-    product.name = req.body.name ?? product.name;
-    product.description = req.body.description ?? product.description;
-    product.genre = req.body.genre ?? product.genre;
-    product.author = req.body.author ?? product.author;
-    product.price = req.body.price ?? product.price;
-    product.stock_quantity = req.body.stock_quantity ?? product.stock_quantity;
+    const {
+        name,
+        description,
+        genre,
+        author,
+        price,
+        stock_quantity
+    } = req.body;
 
-    res.json(product);
+    const sql = `
+        UPDATE products 
+        SET 
+            name = COALESCE(?, name),
+            description = COALESCE(?, description),
+            genre = COALESCE(?, genre),
+            author = COALESCE(?, author),
+            price = COALESCE(?, price),
+            stock_quantity = COALESCE(?, stock_quantity)
+        WHERE id = ?
+    `;
+
+    const values = [
+        name,
+        description,
+        genre,
+        author,
+        price,
+        stock_quantity,
+        id
+    ];
+
+    connection.query(sql, values, (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Prodotto non trovato" });
+        }
+
+        res.json({ message: "Prodotto aggiornato" });
+    });
 };
 
 
@@ -92,9 +147,23 @@ const update = (req, res) => {
 const destroy = (req, res) => {
     const id = parseInt(req.params.id);
 
-    products = products.filter(p => parseInt(p.id) !== id);
+    if (isNaN(id)) {
+        return res.status(400).json({ message: "ID non valido" });
+    }
 
-    res.json({ message: "Prodotto eliminato" });
+    const sql = 'DELETE FROM products WHERE id = ?';
+
+    connection.query(sql, [id], (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Prodotto non trovato" });
+        }
+
+        res.json({ message: "Prodotto eliminato" });
+    });
 };
 
 
