@@ -39,6 +39,7 @@ const show = (req, res) => {
 const create = (req, res) => {
     const {
         name,
+        slug,
         description,
         genre,
         author,
@@ -52,14 +53,16 @@ const create = (req, res) => {
         image_url
     } = req.body;
 
+     
     const sql = `
         INSERT INTO products 
-        (name, description, genre, author, release_date, publisher, binding, ean, price, original_price, stock_quantity, image_url)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+        (name, slug, description, genre, author, release_date, publisher, binding, ean, price, original_price, stock_quantity, image_url)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`;
 
     const values = [
         name,
+        slug,
         description,
         genre,
         author,
@@ -71,7 +74,7 @@ const create = (req, res) => {
         original_price,
         stock_quantity,
         image_url
-    ];
+   ];
 
     connection.query(sql, values, (err, result) => {
         if (err) {
@@ -80,7 +83,7 @@ const create = (req, res) => {
 
         res.status(201).json({
             message: "Prodotto creato",
-            id: result.insertId
+            slug: result.insertId
         });
     });
 };
@@ -88,9 +91,9 @@ const create = (req, res) => {
 
 // UPDATE
 const update = (req, res) => {
-    const id = parseInt(req.params.id);
+    const slug = req.params.slug;
 
-    if (isNaN(id)) {
+    if (isNaN(slug)) {
         return res.status(400).json({ message: "ID non valido" });
     }
 
@@ -112,7 +115,7 @@ const update = (req, res) => {
             author = COALESCE(?, author),
             price = COALESCE(?, price),
             stock_quantity = COALESCE(?, stock_quantity)
-        WHERE id = ?
+        WHERE slug = ?
     `;
 
     const values = [
@@ -122,7 +125,7 @@ const update = (req, res) => {
         author,
         price,
         stock_quantity,
-        id
+        slug
     ];
 
     connection.query(sql, values, (err, result) => {
@@ -141,15 +144,11 @@ const update = (req, res) => {
 
 // DESTROY
 const destroy = (req, res) => {
-    const id = parseInt(req.params.id);
+    const slug = req.params.slug;
 
-    if (isNaN(id)) {
-        return res.status(400).json({ message: "ID non valido" });
-    }
+    const sql = 'DELETE FROM products WHERE slug = ?';
 
-    const sql = 'DELETE FROM products WHERE id = ?';
-
-    connection.query(sql, [id], (err, result) => {
+    connection.query(sql, [slug], (err, result) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
