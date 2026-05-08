@@ -22,7 +22,7 @@ const show = (req, res) => {
 
         if (results.length === 0) return res.status(404).json({ message: "Ordine non trovato" });
 
-        res.send(results[0]);
+        res.json(results[0]);
     });
 }
 
@@ -59,9 +59,8 @@ const update = (req, res) => {
         if (err) return res.status(500).json("Internal Server Error");
 
         if (results.affectedRows === 0) return res.status(404).json({ error: "Nessun elemento da aggiornare" });
-        console.log(results);
 
-        res.send({ message: "Ordine aggiornato con successo" });
+        res.status(200).json({ message: `Ordine ${id} aggiornato con successo` });
     });
 
 }
@@ -94,7 +93,7 @@ const modify = (req, res) => {
 
             if (results.length === 0) return res.status(404).json({ error: "Elemento non trovato" });
 
-            res.send({ message: "Ordine modificato con successo" });
+            res.status(200).json({ message: `Ordine ${id} modificato con successo` });
         });
 
     });
@@ -110,7 +109,7 @@ const destroy = (req, res) => {
         if (err) return res.status(500).json({ error: 'Database internal error' + err });
         if (results.affectedRows === 0) return res.status(404).json({ error: 'Order Not found' })
 
-        res.json({ id })
+        res.status(200).json({ message: `Ordine ${id} eliminato con successo` });
     });
 
 
