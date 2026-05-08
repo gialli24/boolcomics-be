@@ -66,10 +66,16 @@ const update = (req, res) => {
     const sql = `UPDATE orders SET first_name = ?, last_name = ?, email = ?, status = ?, total_price = ?, shipping_address = ?, billing_address = ? WHERE id = ?`
     /* UPDATE `boolcomics`.`orders` SET `first_name` = 'luca', `last_name` = 'sss', `email` = 'paolo.viola@ecmail.cow', `status` = 'pendi', `total_price` = '10.3', `shipping_address` = '52', `billing_address` = '53' WHERE (`id` = '5'); */
     
+     if (!first_name || !last_name || !email || !status || !total_price || !shipping_address || !billing_address) {
+        return res.status(400).json({ message: "Dati mancanti" });
+    }
+
+
     connection.query(sql, [first_name, last_name, email, status, total_price, shipping_address, billing_address, id], (err, results) => {
         if(err) return res.status(500).json("Internal Server Error")
         
         if(results.affectedRows === 0) return res.status(404).json({error: "Nessun elemento da aggiornare"})
+        console.log(results);
         
         res.send({message: "Ordine aggiornato con successo"})
     })
