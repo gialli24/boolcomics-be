@@ -63,37 +63,37 @@ const create = (req, res) => {
 const update = (req, res) => {
     const id = parseInt(req.params.id);
     const { first_name, last_name, email, status, total_price, shipping_address, billing_address } = req.body;
-    const sql = `UPDATE orders SET first_name = ?, last_name = ?, email = ?, status = ?, total_price = ?, shipping_address = ?, billing_address = ? WHERE id = ?`
-    /* UPDATE `boolcomics`.`orders` SET `first_name` = 'luca', `last_name` = 'sss', `email` = 'paolo.viola@ecmail.cow', `status` = 'pendi', `total_price` = '10.3', `shipping_address` = '52', `billing_address` = '53' WHERE (`id` = '5'); */
-    
-     if (!first_name || !last_name || !email || !status || !total_price || !shipping_address || !billing_address) {
+
+    if (!first_name || !last_name || !email || !status || !total_price || !shipping_address || !billing_address) {
         return res.status(400).json({ message: "Dati mancanti" });
     }
 
+    const sql = `UPDATE orders SET first_name = ?, last_name = ?, email = ?, status = ?, total_price = ?, shipping_address = ?, billing_address = ? WHERE id = ?`;
 
     connection.query(sql, [first_name, last_name, email, status, total_price, shipping_address, billing_address, id], (err, results) => {
-        if(err) return res.status(500).json("Internal Server Error")
-        
-        if(results.affectedRows === 0) return res.status(404).json({error: "Nessun elemento da aggiornare"})
+        if (err) return res.status(500).json("Internal Server Error");
+
+        if (results.affectedRows === 0) return res.status(404).json({ error: "Nessun elemento da aggiornare" });
         console.log(results);
-        
-        res.send({message: "Ordine aggiornato con successo"})
-    })
-    
+
+        res.send({ message: "Ordine aggiornato con successo" });
+    });
+
 }
 
 const destroy = (req, res) => {
     const id = parseInt(req.params.id);
 
-    const sql = `DELETE FROM orders WHERE id = ?`
-    connection.query(sql, [id], (err, results) => {
-        if(err) return res.status(500).json({error: 'Database internal error'});
-        if (results.length === 0) return res.status(404).json({ error: 'Order Not found' })
-        
-            res.json({id})
-    })
+    const sql = `DELETE FROM orders WHERE id = ?`;
 
-    
+    connection.query(sql, [id], (err, results) => {
+        if (err) return res.status(500).json({ error: 'Database internal error' });
+        if (results.length === 0) return res.status(404).json({ error: 'Order Not found' })
+
+        res.json({ id })
+    });
+
+
 };
 
 module.exports = { index, show, create, update, destroy };
