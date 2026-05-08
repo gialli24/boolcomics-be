@@ -21,9 +21,9 @@ router.get('/:slug', show);
 router.post('/', create);
 
 // UPDATE prodotto
-router.put('/:id', update);
+router.put('/:slug', update);
 
 // DELETE prodotto
-router.delete('/:id', destroy);
+router.delete('/:slug', destroy);
 
 module.exports = router;

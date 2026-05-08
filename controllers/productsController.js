@@ -1,7 +1,16 @@
 const connection = require('../database/db');
 
+// genera slug
+const generateSlug = (text) => {
+    return text
+        .toLowerCase()
+        .trim()
+        .replace(/ /g, '-')
+        .replace(/[^\w-]+/g, '');
+};
 
-// INDEX 
+
+// INDEX
 const index = (req, res) => {
     const sql = 'SELECT * FROM products';
 
@@ -15,7 +24,7 @@ const index = (req, res) => {
 };
 
 
-// SHOW 
+// SHOW
 const show = (req, res) => {
     const slug = req.params.slug;
 
@@ -35,11 +44,10 @@ const show = (req, res) => {
 };
 
 
-// CREATE 
+// CREATE
 const create = (req, res) => {
     const {
         name,
-        slug,
         description,
         genre,
         author,
@@ -53,49 +61,69 @@ const create = (req, res) => {
         image_url
     } = req.body;
 
-     
-    const sql = `
-        INSERT INTO products 
-        (name, slug, description, genre, author, release_date, publisher, binding, ean, price, original_price, stock_quantity, image_url)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-`;
-
-    const values = [
-        name,
-        slug,
-        description,
-        genre,
-        author,
-        release_date,
-        publisher,
-        binding,
-        ean,
-        price,
-        original_price,
-        stock_quantity,
-        image_url
-   ];
-
-    connection.query(sql, values, (err, result) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-
-        res.status(201).json({
-            message: "Prodotto creato",
-            slug: result.insertId
+    if (!name || !price || !ean) {
+        return res.status(400).json({
+            message: "name, price ed ean sono obbligatori"
         });
-    });
+    }
+
+    const slug = generateSlug(name);
+
+    // controllo duplicato slug
+    connection.query(
+        'SELECT id FROM products WHERE slug = ?',
+        [slug],
+        (err, results) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            if (results.length > 0) {
+                return res.status(400).json({
+                    message: "Slug già esistente"
+                });
+            }
+
+            const sql = `
+                INSERT INTO products 
+                (name, slug, description, genre, author, release_date, publisher, binding, ean, price, original_price, stock_quantity, image_url)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            const values = [
+                name,
+                slug,
+                description,
+                genre,
+                author,
+                release_date,
+                publisher,
+                binding,
+                ean,
+                price,
+                original_price,
+                stock_quantity,
+                image_url
+            ];
+
+            connection.query(sql, values, (err) => {
+                if (err) {
+                    return res.status(500).json({ error: err.message });
+                }
+
+                res.status(201).json({
+                    message: "Prodotto creato",
+                    slug
+                });
+            });
+        }
+    );
 };
 
 
 // UPDATE
 const update = (req, res) => {
     const slug = req.params.slug;
-
-    if (isNaN(slug)) {
-        return res.status(400).json({ message: "ID non valido" });
-    }
 
     const {
         name,
@@ -106,7 +134,7 @@ const update = (req, res) => {
         stock_quantity
     } = req.body;
 
-    const sql = `
+    let sql = `
         UPDATE products 
         SET 
             name = COALESCE(?, name),
@@ -115,7 +143,6 @@ const update = (req, res) => {
             author = COALESCE(?, author),
             price = COALESCE(?, price),
             stock_quantity = COALESCE(?, stock_quantity)
-        WHERE slug = ?
     `;
 
     const values = [
@@ -124,9 +151,19 @@ const update = (req, res) => {
         genre,
         author,
         price,
-        stock_quantity,
-        slug
+        stock_quantity
     ];
+
+    // aggiorna slug se cambia nome
+    if (name) {
+        const newSlug = generateSlug(name);
+
+        sql += `, slug = ?`;
+        values.push(newSlug);
+    }
+
+    sql += ` WHERE slug = ?`;
+    values.push(slug);
 
     connection.query(sql, values, (err, result) => {
         if (err) {
