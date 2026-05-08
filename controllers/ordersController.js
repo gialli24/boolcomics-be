@@ -1,20 +1,5 @@
 const connection = require('../database/db');
 
-const orders = [
-    {
-        id: 1,
-        first_name: "Mario",
-        last_name: "Rossi",
-        email: "mario.rossi@gmail.com"
-    },
-    {
-        id: 2,
-        first_name: "Luca",
-        last_name: "Bianchi",
-        email: "luca.bianchi@gmail.com"
-    }
-]
-
 const index = (req, res) => {
     const sql = "SELECT * FROM orders";
 
