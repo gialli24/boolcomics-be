@@ -38,10 +38,19 @@ const create = (req, res) => {
     connection.query(sql, [first_name, last_name, email, status, total_price, shipping_address, billing_address], (err, results) => {
         if (err) return res.status(500).json("Internal Server Error");
 
-        res.status(201).json({
-            id: results.insertId,
-            message: "Ordine creato con successo"
-        });
+            const newSql = `SELECT * FROM orders ORDER BY id DESC LIMIT 1`
+            connection.query(newSql, (err, newResults) => {
+                if (err) return res.status(500).json("Internal Server Error");
+                console.log(newResults);
+
+                if(newResults.length === 0) return res.status(404).json({message: "Ordine non aggiunto"})
+                
+                res.json({ 
+                    message: "Elemento aggiunto con successo",
+                    newElement: newResults[0]
+                })
+            } )
+        
     });
 }
 
