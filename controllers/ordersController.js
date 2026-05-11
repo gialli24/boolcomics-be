@@ -26,7 +26,7 @@ const show = (req, res) => {
     });
 }
 
-const create = (req, res) => {
+/* const create = (req, res) => {
     const { first_name, last_name, email, status, total_price, shipping_address, billing_address } = req.body;
 
     if (!first_name || !last_name || !email || !status || !total_price || !shipping_address || !billing_address) {
@@ -52,9 +52,9 @@ const create = (req, res) => {
             });
         
     });
-}
+} */
 
-const update = (req, res) => {
+/* const update = (req, res) => {
     const id = parseInt(req.params.id);
     const { first_name, last_name, email, status, total_price, shipping_address, billing_address } = req.body;
 
@@ -122,6 +122,6 @@ const destroy = (req, res) => {
     });
 
 
-};
+}; */
 
-module.exports = { index, show, create, update, modify, destroy };
+module.exports = { index, show };
