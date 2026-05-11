@@ -17,9 +17,10 @@ const index = (req, res) => {
 
 
 const show = (req, res) => {
-
-    sql = 'SELECT * FROM categories WHERE id = ?'
-    connection.query(sql, [req.params.id], (err, result) =>{
+    const id = parseInt(req.params.id)
+    const sql = 'SELECT * FROM categories WHERE id = ?'
+    
+    connection.query(sql, [id], (err, result) =>{
         if(err) return res.json({message: 'Inernal Server Error'})
         
         if(result.length == 0) return res.json({message: 'Category not found'})
