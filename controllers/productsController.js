@@ -12,7 +12,18 @@ const generateSlug = (text) => {
 
 // INDEX
 const index = (req, res) => {
-    const sql = 'SELECT * FROM products';
+    let sql = 'SELECT * FROM products';
+
+     // ordinamento prezzo crescente
+    if (req.query.sort === 'price_asc') {
+        sql += ' ORDER BY price ASC';
+    }
+
+    // ordinamento prezzo decrescente
+    else if (req.query.sort === 'price_desc') {
+        sql += ' ORDER BY price DESC';
+    }
+
 
     connection.query(sql, (err, productsResults) => {
         if (err) return res.status(500).json("Internal Server Error");
