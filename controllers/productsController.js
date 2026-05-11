@@ -45,7 +45,7 @@ const show = (req, res) => {
 
 
 // CREATE
-const create = (req, res) => {
+/* const create = (req, res) => {
     const {
         name,
         description,
@@ -118,11 +118,11 @@ const create = (req, res) => {
             });
         }
     );
-};
+}; */
 
 
 // UPDATE
-const update = (req, res) => {
+/* const update = (req, res) => {
     const slug = req.params.slug;
 
     const {
@@ -176,11 +176,11 @@ const update = (req, res) => {
 
         res.json({ message: "Prodotto aggiornato" });
     });
-};
+}; */
 
 
 // DESTROY
-const destroy = (req, res) => {
+/* const destroy = (req, res) => {
     const slug = req.params.slug;
 
     const sql = 'DELETE FROM products WHERE slug = ?';
@@ -197,7 +197,7 @@ const destroy = (req, res) => {
         res.json({ message: "Prodotto eliminato" });
     });
 };
-
+ */
 /* Most Purchased */
 const mostPurchased = (req, res) => {
     const sql = `
@@ -224,8 +224,5 @@ const mostPurchased = (req, res) => {
 module.exports = {
     index,
     show,
-    create,
-    update,
-    destroy,
     mostPurchased
 };
