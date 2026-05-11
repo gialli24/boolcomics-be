@@ -138,8 +138,19 @@ const mostPurchased = (req, res) => {
     });
 };
 
+// last arrived
+const lastArrived = (req, res) => {
+    const sql = 'SELECT * FROM products ORDER BY created_at DESC LIMIT 10'
+    connection.query(sql, (err, results) => {
+        if (err) return res.status(500).json("Internal Server Error");
+
+        if (results.length === 0) return res.status(404).json({ message: "Nessun nuovo arrivo trovato" });
+
+        res.json(results)
+    })
 
 
+    }
 // CREATE
 /* const create = (req, res) => {
     const {
@@ -301,5 +312,6 @@ const mostPurchased = (req, res) => {
 module.exports = {
     index,
     show,
-    mostPurchased
+    mostPurchased,
+    lastArrived
 };
