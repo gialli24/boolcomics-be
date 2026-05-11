@@ -14,16 +14,33 @@ const generateSlug = (text) => {
 const index = (req, res) => {
     let sql = 'SELECT * FROM products';
 
-     // ordinamento prezzo crescente
-    if (req.query.sort === 'price_asc') {
-        sql += ' ORDER BY price ASC';
+    const sorts = req.query.sort
+
+    //check valid sort parameter
+    if(sorts && !['price_asc', 'price_desc', 'name_asc', 'date_desc'].includes(sorts)) {
+        return res.status(400).json({ message: "Invalid sort parameter" });
     }
 
-    // ordinamento prezzo decrescente
-    else if (req.query.sort === 'price_desc') {
+     // order by price ascending
+    if (sorts === 'price_asc') {
+         sql += ' ORDER BY price ASC';
+    }
+
+    // order by price descending
+    if (sorts === 'price_desc') {
         sql += ' ORDER BY price DESC';
     }
 
+    //order by name ascending
+    if(sorts === 'name_asc') {
+        sql += ' ORDER BY name ASC';
+    }
+
+    // order by date descending
+    if(sorts === 'date_desc') {
+        sql += ' ORDER BY release_date DESC';
+    }
+    
 
     connection.query(sql, (err, productsResults) => {
         if (err) return res.status(500).json("Internal Server Error");
