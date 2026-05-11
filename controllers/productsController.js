@@ -17,7 +17,7 @@ const index = (req, res) => {
     const sorts = req.query.sort
 
     //check valid sort parameter
-    if(sorts && !['price_asc', 'price_desc', 'name_asc', 'date_desc'].includes(sorts)) {
+    if(sorts && !['price_asc', 'price_desc', 'name_asc', 'date_asc', 'date_desc'].includes(sorts)) {
         return res.status(400).json({ message: "Invalid sort parameter" });
     }
 
@@ -34,6 +34,11 @@ const index = (req, res) => {
     //order by name ascending
     if(sorts === 'name_asc') {
         sql += ' ORDER BY name ASC';
+    }
+
+    //order by date ascending
+    if(sorts === 'date_asc') {
+        sql += ' ORDER BY release_date ASC';
     }
 
     // order by date descending
@@ -111,6 +116,28 @@ const show = (req, res) => {
 
 
 }
+
+/* Most Purchased */
+const mostPurchased = (req, res) => {
+    const sql = `
+        SELECT
+            products.*,
+            SUM(order_items.quantity) AS total_sold
+            FROM products
+            JOIN order_items ON products.id = order_items.product_id
+            GROUP BY products.id
+            ORDER BY total_sold DESC
+            LIMIT 10;`;
+
+    connection.query(sql, (err, results) => {
+        if (err) return res.status(500).json("Internal Server Error");
+
+        if (results.length === 0) return res.status(404).json({ message: "Nessun ordine trovato" });
+
+        res.json(results);
+    });
+};
+
 
 
 // CREATE
@@ -267,26 +294,7 @@ const show = (req, res) => {
     });
 };
  */
-/* Most Purchased */
-const mostPurchased = (req, res) => {
-    const sql = `
-        SELECT
-            products.*,
-            SUM(order_items.quantity) AS total_sold
-        FROM products
-        JOIN order_items ON products.id = order_items.product_id
-        GROUP BY products.id
-        ORDER BY total_sold DESC
-        LIMIT 10;`;
 
-    connection.query(sql, (err, results) => {
-        if (err) return res.status(500).json("Internal Server Error");
-
-        if (results.length === 0) return res.status(404).json({ message: "Nessun ordine trovato" });
-
-        res.json(results);
-    });
-};
 
 
 // EXPORT
