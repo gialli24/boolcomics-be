@@ -62,11 +62,11 @@ const show = (req, res) => {
 
 
         const categoryProduct = `
-                                SELECT category_products.product_id, categories.name, categories.slug
-            FROM category_products
-            JOIN categories ON category_products.category_id = categories.id
-            JOIN products ON products.id = category_products.product_id
-            WHERE products.slug = ?
+                                SELECT categories.name, categories.slug
+                                FROM category_products
+                                JOIN categories ON category_products.category_id = categories.id
+                                JOIN products ON products.id = category_products.product_id
+                                WHERE products.slug = ?
                                 `
         // Execute the query to get the categories associated
         connection.query(categoryProduct, [comucs_slug], (err, categories) => {
