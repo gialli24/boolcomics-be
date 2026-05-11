@@ -6,10 +6,14 @@ const {
     show,
     create,
     update,
-    destroy
+    destroy,
+    mostPurchased
 } = require('../controllers/productsController');
 
 // ROUTES
+
+// Most Purchased
+router.get('/most-purchased', mostPurchased);
 
 // GET tutti i prodotti
 router.get('/', index);

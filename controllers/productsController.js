@@ -198,6 +198,27 @@ const destroy = (req, res) => {
     });
 };
 
+/* Most Purchased */
+const mostPurchased = (req, res) => {
+    const sql = `
+        SELECT
+            products.*,
+            SUM(order_items.quantity) AS total_sold
+        FROM products
+        JOIN order_items ON products.id = order_items.product_id
+        GROUP BY products.id
+        ORDER BY total_sold DESC
+        LIMIT 10;`;
+
+    connection.query(sql, (err, results) => {
+        if (err) return res.status(500).json("Internal Server Error");
+
+        if (results.length === 0) return res.status(404).json({ message: "Nessun ordine trovato" });
+
+        res.json(results);
+    });
+};
+
 
 // EXPORT
 module.exports = {
@@ -205,5 +226,6 @@ module.exports = {
     show,
     create,
     update,
-    destroy
+    destroy,
+    mostPurchased
 };
