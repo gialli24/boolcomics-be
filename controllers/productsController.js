@@ -15,34 +15,24 @@ const index = (req, res) => {
 
     const sorts = req.query.sort;
 
-    //check valid sort parameter
-    if (sorts && !['price_asc', 'price_desc', 'name_asc', 'date_asc', 'date_desc'].includes(sorts)) {
-        return res.status(400).json({ message: "Invalid sort parameter" });
-    }
-
-    // order by price ascending
-    if (sorts === 'price_asc') {
-        sql += ' ORDER BY price ASC';
-    }
-
-    // order by price descending
-    if (sorts === 'price_desc') {
-        sql += ' ORDER BY price DESC';
-    }
-
-    //order by name ascending
-    if (sorts === 'name_asc') {
-        sql += ' ORDER BY name ASC';
-    }
-
-    //order by date ascending
-    if (sorts === 'date_asc') {
-        sql += ' ORDER BY release_date ASC';
-    }
-
-    // order by date descending
-    if (sorts === 'date_desc') {
-        sql += ' ORDER BY release_date DESC';
+    switch (sorts) {
+        case "price_asc":
+            sql += ' ORDER BY price ASC';
+            break;
+        case "price_desc":
+            sql += ' ORDER BY price DESC';
+            break;
+        case "name_asc":
+            sql += ' ORDER BY name ASC';
+            break;
+        case "date_asc":
+            sql += ' ORDER BY release_date ASC';
+            break;
+        case "date_desc":
+            sql += ' ORDER BY release_date DESC';
+            break;
+        default:
+            return res.status(400).json({ message: "Invalid sort parameter" });
     }
 
 
