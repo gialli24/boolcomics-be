@@ -27,11 +27,16 @@ const show = (req, res) => {
 }
 
 const create = (req, res) => {
-    const { first_name, last_name, email, status, shipping_address, billing_address, items} = req.body;
+    const { first_name, last_name, email, status, total_price, address } = req.body;
+
+    const shipping_address = address;
+    const billing_address = address;
+
+    const items = [{ product_id: 1, quantity: 1, price: 10 }]
 
     // 1. VALIDAZIONE
-    if (!first_name || !last_name || !email || !status || !shipping_address || !billing_address || !Array.isArray(items) || items.length === 0) {
-        
+    if (!first_name || !last_name || !email || !status || !shipping_address || !billing_address || !Array.isArray(items)) {
+
         return res.status(400).json({ message: "Dati mancanti o items non validi" });
     }
 
