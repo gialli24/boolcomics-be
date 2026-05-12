@@ -1,4 +1,38 @@
+const e = require('cors');
 const connection = require('../database/db');
+const { MailtrapClient } = require("mailtrap");
+
+function sendEmail(email, subject, text, category, name) {
+
+    /* const TOKEN = "a8db9a6afae3c445d9820e7328445bbc"; */
+
+    const client = new MailtrapClient({
+        token: 'a8db9a6afae3c445d9820e7328445bbc',
+    });
+
+    const sender = {
+        email: "hello@demomailtrap.co",
+        name: name,
+    };
+    const recipients = [
+        {
+            email: email,
+
+        }
+    ];
+
+    client
+        .send({
+            from: sender,
+            to: recipients,
+            subject: subject,
+            text: text,
+            category: category,
+        })
+        .then(console.log, console.error);
+
+
+}
 
 const index = (req, res) => {
     const sql = "SELECT * FROM orders";
@@ -161,6 +195,21 @@ const create = (req, res) => {
                                     }
                                 );
                             });
+
+                            /* userEmail, subject, text, category, name */
+                            const usersSubject = "Conferma ordine";
+                            const userText = `
+                                            Ciao ${first_name},\n\nGrazie per il tuo ordine! 
+                                            Il tuo ordine #${orderId} è stato ricevuto e stiamo lavorando per prepararlo. 
+                                            Ti aggiorneremo non appena sarà spedito.\n\nDettagli ordine:\n- Nome: ${first_name} ${last_name}\n-
+                                             Indirizzo: ${shipping_address}\n- 
+                                             Totale: $${total_price}\n\nGrazie per aver scelto il nostro negozio!`;
+                            const userCategory = "Ordine";
+                            const userEmail = email;
+
+
+                            const userName = `${first_name} ${last_name}`;
+                            sendEmail(userEmail, usersSubject, userText, userCategory, userName);
 
                             return res.json({
                                 message: "Ordine creato con successo",
