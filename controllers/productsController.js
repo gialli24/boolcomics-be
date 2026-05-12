@@ -13,6 +13,11 @@ const generateSlug = (text) => {
 const index = (req, res) => {
     let sql = 'SELECT * FROM products';
 
+    const search = req.query.search;
+    if (search) {
+        sql += ` WHERE name LIKE '%${search}%'`;
+    }
+
     const sorts = req.query.sort;
 
     switch (sorts) {
@@ -32,12 +37,8 @@ const index = (req, res) => {
             sql += ' ORDER BY release_date DESC';
             break;
         default:
-            return res.status(400).json({ message: "Invalid sort parameter" });
-    }
-
-    const search = req.query.search;
-    if (search) {
-        sql += ` WHERE name LIKE '%${search}%'`;
+            if (sorts === "") return res.status(400).json({ message: "Invalid sort parameter" });
+            break;
     }
 
     connection.query(sql, (err, productsResults) => {
