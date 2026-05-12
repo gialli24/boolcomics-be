@@ -8,6 +8,8 @@ const cors = require('cors');
 const ordersRouter = require('./routers/orders');
 const productRoutes = require('./routers/products');
 const categoriesRouter = require('./routers/categories')
+const addressesRouter = require('./routers/addresses')
+
 /* Public Assets middleware */
 app.use(express.static('public'));
 
@@ -20,7 +22,9 @@ app.use(cors());
 /* Routers redirects */
 app.use('/orders', ordersRouter);
 app.use('/products', productRoutes);
-app.use('/categories', categoriesRouter );
+app.use('/categories', categoriesRouter);
+app.use('/addresses', addressesRouter);
+
 
 app.get('/', (req, res) => {
     res.send("Hello World");
