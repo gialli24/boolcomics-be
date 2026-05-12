@@ -1,13 +1,17 @@
 const e = require('cors');
 const connection = require('../database/db');
+
+const fs = require('fs');
+
 const { MailtrapClient } = require("mailtrap");
+let htmlTemplate = fs.readFileSync('./email-template/order_email.html', 'utf8');
 
 function sendEmail(email, subject, text, category, name) {
 
-    /* const TOKEN = "a8db9a6afae3c445d9820e7328445bbc"; */
+    const token = process.env.MAILTRAP_API_KEY || "token";
 
     const client = new MailtrapClient({
-        token: 'a8db9a6afae3c445d9820e7328445bbc',
+        token: token
     });
 
     const sender = {
@@ -17,7 +21,7 @@ function sendEmail(email, subject, text, category, name) {
     const recipients = [
         {
             email: email,
-
+            name: name
         }
     ];
 
@@ -26,11 +30,10 @@ function sendEmail(email, subject, text, category, name) {
             from: sender,
             to: recipients,
             subject: subject,
-            text: text,
+            html: htmlTemplate,
             category: category,
         })
         .then(console.log, console.error);
-
 
 }
 
