@@ -1,6 +1,6 @@
 const connection = require('../database/db');
 
-// genera slug
+// Slug Generator
 const generateSlug = (text) => {
     return text
         .toLowerCase()
@@ -9,21 +9,20 @@ const generateSlug = (text) => {
         .replace(/[^\w-]+/g, '');
 };
 
-
-// INDEX
+// Index
 const index = (req, res) => {
     let sql = 'SELECT * FROM products';
 
-    const sorts = req.query.sort
+    const sorts = req.query.sort;
 
     //check valid sort parameter
-    if(sorts && !['price_asc', 'price_desc', 'name_asc', 'date_asc', 'date_desc'].includes(sorts)) {
+    if (sorts && !['price_asc', 'price_desc', 'name_asc', 'date_asc', 'date_desc'].includes(sorts)) {
         return res.status(400).json({ message: "Invalid sort parameter" });
     }
 
-     // order by price ascending
+    // order by price ascending
     if (sorts === 'price_asc') {
-         sql += ' ORDER BY price ASC';
+        sql += ' ORDER BY price ASC';
     }
 
     // order by price descending
@@ -32,20 +31,25 @@ const index = (req, res) => {
     }
 
     //order by name ascending
-    if(sorts === 'name_asc') {
+    if (sorts === 'name_asc') {
         sql += ' ORDER BY name ASC';
     }
 
     //order by date ascending
-    if(sorts === 'date_asc') {
+    if (sorts === 'date_asc') {
         sql += ' ORDER BY release_date ASC';
     }
 
     // order by date descending
-    if(sorts === 'date_desc') {
+    if (sorts === 'date_desc') {
         sql += ' ORDER BY release_date DESC';
     }
-    
+
+
+    const search = req.query.search;
+    if (search) {
+        sql += ` WHERE name LIKE '%${search}%'`;
+    }
 
     connection.query(sql, (err, productsResults) => {
         if (err) return res.status(500).json("Internal Server Error");
@@ -78,7 +82,7 @@ const index = (req, res) => {
 }
 
 
-// SHOW
+// Show
 const show = (req, res) => {
     const productSql = 'SELECT * FROM products WHERE slug = ?';
 
@@ -150,7 +154,7 @@ const lastArrived = (req, res) => {
     })
 
 
-    }
+}
 // CREATE
 /* const create = (req, res) => {
     const {
