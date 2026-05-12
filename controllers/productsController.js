@@ -35,7 +35,6 @@ const index = (req, res) => {
             return res.status(400).json({ message: "Invalid sort parameter" });
     }
 
-
     const search = req.query.search;
     if (search) {
         sql += ` WHERE name LIKE '%${search}%'`;
