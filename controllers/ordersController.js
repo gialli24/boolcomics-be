@@ -47,11 +47,15 @@ const create = (req, res) => {
     // RECUPERO SLUGS DEI PRODOTTI PER CONTROLLO STOCK
     let productSql = `SELECT * FROM products WHERE slug IN (?)`;
 
-    const slugs = items.map(item => { return item.slug })
+    const slugs = items.map(item => item.slug )
 
     connection.query(productSql, [slugs], (err, products) => {
         if (err) return res.status(500).json({ message: "Errore database", error: err.message });
 
+        if (products.length === 0) {
+            return res.status(400).json({ message: "Nessun prodotto trovato per gli slug forniti" });
+        }
+        
         const orderedProducts = products
 
 
