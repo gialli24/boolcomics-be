@@ -1,27 +1,27 @@
 const e = require('cors');
 const connection = require('../database/db');
-
 const fs = require('fs');
 
 const { MailtrapClient } = require("mailtrap");
-let htmlTemplate = fs.readFileSync('./email-template/order_email.html', 'utf8');
-
-function sendEmail(email, subject, text, category, name) {
-
-    const token = process.env.MAILTRAP_API_KEY || "token";
+let htmlTemplateUser = fs.readFileSync('./email-template/order_email.html', 'utf8');
+let htmlTemplateAdmin = fs.readFileSync('./email-template/seller_email.html', 'utf8');
+const TOKEN = process.env.TOKEN || "token";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@demomailtrap.co";
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN
+function sendEmail(email, template, typeOfToken) {
 
     const client = new MailtrapClient({
-        token: token
+        token: typeOfToken
     });
 
     const sender = {
         email: "hello@demomailtrap.co",
-        name: name,
+        name: "E-commerce",
     };
     const recipients = [
         {
             email: email,
-            name: name
+            name: "E-commerce"
         }
     ];
 
@@ -29,9 +29,9 @@ function sendEmail(email, subject, text, category, name) {
         .send({
             from: sender,
             to: recipients,
-            subject: subject,
-            html: htmlTemplate,
-            category: category,
+            subject: "Notifica",
+            html: template,
+            category: "Generale",
         })
         .then(console.log, console.error);
 
@@ -206,15 +206,16 @@ const create = (req, res) => {
                                     console.log("Errore recupero indirizzo:", err5);
                                 }
 
-                                const addressInfo = addressResults[0].street + ", " + addressResults[0].city + ", " + addressResults[0].state + ", " + addressResults[0].zip_code + ", " + addressResults[0].country;
+                                /* const addressInfo = addressResults[0].street + ", " + addressResults[0].city + ", " + addressResults[0].state + ", " + addressResults[0].zip_code + ", " + addressResults[0].country;
                                 const usersSubject = "Conferma ordine";
                                 const userText = `Ciao ${first_name},\n\nGrazie per il tuo ordine! Il tuo ordine #${orderId} è stato ricevuto e stiamo lavorando per prepararlo. Ti aggiorneremo non appena sarà spedito.\n\nDettagli ordine:\n- Nome: ${first_name} ${last_name}\n-Indirizzo: ${addressInfo}\n- Totale: $${total_price}\n\nGrazie per aver scelto il nostro negozio!`;
                                 const userCategory = "Ordine";
+                                const userName = `${first_name} ${last_name}`;
+                                */
                                 const userEmail = email;
 
-
-                                const userName = `${first_name} ${last_name}`;
-                                sendEmail(userEmail, usersSubject, userText, userCategory, userName);
+                                sendEmail(userEmail, htmlTemplateUser, TOKEN);
+                                sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN);
 
                                 return res.json({
                                     message: "Ordine creato con successo",
