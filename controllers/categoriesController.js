@@ -4,9 +4,9 @@ const connection = require("../database/db")
 const index = (req, res) => {
     const sql = 'SELECT * FROM categories'
     connection.query(sql, (err, result) =>{
-        if(err) return res.json({message: 'Inernal Server Error'})
+        if(err) return res.json({message: 'Internal Server Error'})
         
-        if(result.length == 0) return res.json({message: 'No categories found'})
+        if(result.length == 0) return res.json({message: 'Nessuna categoria trovata'})
 
         res.json(result)
 
@@ -21,9 +21,9 @@ const show = (req, res) => {
     const sql = 'SELECT * FROM categories WHERE id = ?'
     
     connection.query(sql, [id], (err, result) =>{
-        if(err) return res.json({message: 'Inernal Server Error'})
+        if(err) return res.json({message: 'Internal Server Error'})
         
-        if(result.length == 0) return res.json({message: 'Category not found'})
+        if(result.length == 0) return res.json({message: 'Categoria non trovata'})
 
         res.json(result[0])
     })

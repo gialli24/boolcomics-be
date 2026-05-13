@@ -37,7 +37,7 @@ const index = (req, res) => {
             sql += ' ORDER BY release_date DESC';
             break;
         default:
-            if (sorts === "") return res.status(400).json({ message: "Invalid sort parameter" });
+            if (sorts === "") return res.status(400).json({ message: "Parametro di ordinamento non valido (sort)" });
             break;
     }
 
@@ -83,7 +83,7 @@ const show = (req, res) => {
     connection.query(productSql, [comucs_slug], (err, results) => {
         if (err) return res.status(500).json({ message: "Internal Server Error" })
 
-        if (results.length === 0) return res.status(404).json({ message: "Product Not found" })
+        if (results.length === 0) return res.status(404).json({ message: "Prodotto non trovato" })
 
         const product = results[0]
 
