@@ -9,7 +9,7 @@ const ordersRouter = require('./routers/orders');
 const productRoutes = require('./routers/products');
 const categoriesRouter = require('./routers/categories')
 const addressesRouter = require('./routers/addresses')
-
+const cuponsRouter = require('./routers/cupons')
 /* Public Assets middleware */
 app.use(express.static('public'));
 
@@ -24,7 +24,7 @@ app.use('/orders', ordersRouter);
 app.use('/products', productRoutes);
 app.use('/categories', categoriesRouter);
 app.use('/addresses', addressesRouter);
-
+app.use('/cupons', cuponsRouter);
 
 app.get('/', (req, res) => {
     res.send("Hello World");
