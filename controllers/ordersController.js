@@ -1,14 +1,22 @@
 const e = require('cors');
 const connection = require('../database/db');
+
 const fs = require('fs');
 
-const { MailtrapClient } = require("mailtrap");
 let htmlTemplateUser = fs.readFileSync('./email-template/order_email.html', 'utf8');
 let htmlTemplateAdmin = fs.readFileSync('./email-template/seller_email.html', 'utf8');
+
 const TOKEN = process.env.TOKEN || "token";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@demomailtrap.co";
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN
-function sendEmail(email, template, typeOfToken) {
+
+const { MailtrapClient } = require("mailtrap");
+function sendEmail(email, template, typeOfToken, data) {
+
+    template = template
+        .replace('{{first_name}}', data.first_name)
+        .replace('{{order_id}}', "ZX789W&-568WE")
+        .replace('{{order_date}}', data.order_date);
 
     const client = new MailtrapClient({
         token: typeOfToken
@@ -66,9 +74,23 @@ const show = (req, res) => {
 const create = (req, res) => {
     const { first_name, last_name, email, address, total_price, status, items } = req.body;
 
-
     const shipping_address = address;
     const billing_address = address;
+
+    const order_date = new Date().toISOString().slice(0, 10);
+
+    const data = {
+        first_name,
+        last_name,
+        email,
+        status,
+        total_price,
+        shipping_address,
+        billing_address,
+        items,
+        order_date,
+        status
+    }
 
     // 1. VALIDAZIONE DATI
     if (!first_name || !last_name || !email || !status || !shipping_address || !billing_address || !Array.isArray(items)) {
@@ -84,7 +106,7 @@ const create = (req, res) => {
     // RECUPERO SLUGS DEI PRODOTTI PER CONTROLLO STOCK
     let productSql = `SELECT * FROM products WHERE slug IN (?)`;
 
-    const slugs = items.map(item => item.slug )
+    const slugs = items.map(item => item.slug)
 
     connection.query(productSql, [slugs], (err, products) => {
         if (err) return res.status(500).json({ message: "Errore database", error: err.message });
@@ -92,7 +114,7 @@ const create = (req, res) => {
         if (products.length === 0) {
             return res.status(400).json({ message: "Nessun prodotto trovato per gli slug forniti" });
         }
-        
+
         const orderedProducts = products
 
 
@@ -164,14 +186,17 @@ const create = (req, res) => {
                             if (err4) {
                                 console.log("Errore stock:", err4);
                             }
-                            
+
+                            sendEmail(email, htmlTemplateUser, TOKEN, data);
+                            /* sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data); */
+
                             return res.json({
                                 message: "Ordine creato con successo",
                                 orderId,
                                 total_price
                             });
                         })
-                        
+
                     })
                 })
 

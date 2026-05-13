@@ -163,7 +163,7 @@
         <div class="title">CONFERMA D'ORDINE</div>
 
         <div class="content">
-            <p>Ciao Andrea,</p>
+            <p>Ciao {{first_name}},</p>
             <p>Ti informiamo che il tuo ordine è stato ricevuto correttamente. Stiamo preparando i tuoi articoli e ti
                 invieremo un'email non appena il pacco sarà spedito.</p>
             <p>Puoi seguire lo stato del tuo ordine nella sezione "I MIEI ORDINI" del tuo account all'interno dell'APP o
@@ -176,9 +176,9 @@
 
         <div class="order-info">
             <div class="label">ORDINE N.</div>
-            <div class="value">90005364403</div>
+            <div class="value">{{order_id}}</div>
             <div class="label">DATA ORDINE:</div>
-            <div class="value">2024-05-12</div>
+            <div class="value">{{order_date}}</div>
         </div>
 
         <div class="product-box">
