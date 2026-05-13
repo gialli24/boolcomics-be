@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .header h1 {
+            font-size: 28pt;
+            letter-spacing: 4px;
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .title {
+            text-align: center;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 30px 0;
+            font-size: 12pt;
+        }
+
+        .content {
+            font-size: 10pt;
+            margin-bottom: 30px;
+        }
+
+        .content p {
+            margin-bottom: 15px;
+        }
+
+        .order-info {
+            text-align: center;
+            margin: 30px 0;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .order-info div {
+            margin-bottom: 10px;
+        }
+
+        .label {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 9pt;
+        }
+
+        .value {
+            font-size: 10pt;
+        }
+
+        .product-box {
+            display: table;
+            width: 100%;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .product-image {
+            display: table-cell;
+            width: 120px;
+            vertical-align: top;
+        }
+
+        .product-image img {
+            width: 100px;
+            background-color: #f4f4f4;
+        }
+
+        .product-details {
+            display: table-cell;
+            vertical-align: top;
+            padding-left: 20px;
+        }
+
+        .product-name {
+            font-weight: bold;
+            font-size: 10pt;
+        }
+
+        .product-meta {
+            font-size: 9pt;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .product-price {
+            text-align: right;
+            font-weight: bold;
+            margin-top: 40px;
+        }
+
+        .summary-box {
+            background-color: #fafafa;
+            padding: 20px;
+            margin-top: 30px;
+            border: 1px solid #eee;
+        }
+
+        .summary-row {
+            display: table;
+            width: 100%;
+            font-size: 10pt;
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            display: table-cell;
+        }
+
+        .summary-value {
+            display: table-cell;
+            text-align: right;
+        }
+
+        .total-row {
+            margin-top: 15px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            font-weight: bold;
+            font-size: 12pt;
+        }
+
+        .footer {
+            font-size: 7pt;
+            color: #999;
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>BOOLCOMICS</h1>
+        </div>
+
+        <div class="title">CONFERMA D'ORDINE</div>
+
+        <div class="content">
+            <p>Ciao {{first_name}},</p>
+            <p>Ti informiamo che il tuo ordine è stato ricevuto correttamente. Stiamo preparando i tuoi articoli e ti
+                invieremo un'email non appena il pacco sarà spedito.</p>
+            <p>Puoi seguire lo stato del tuo ordine nella sezione "I MIEI ORDINI" del tuo account all'interno dell'APP o
+                sul nostro sito web.</p>
+            <p>Speriamo di vederti presto da Boolcomics!</p>
+            <p>Il nostro Servizio Clienti è a tua disposizione attraverso la nostra chat o il modulo di contatto
+                disponibile sul nostro sito web BOOLCOMICS.com.</p>
+            <p>Servizio clienti Boolcomics.</p>
+        </div>
+
+        <div class="order-info">
+            <div class="label">ORDINE N.</div>
+            <div class="value">{{order_id}}</div>
+            <div class="label">DATA ORDINE:</div>
+            <div class="value">{{order_date}}</div>
+        </div>
+
+        <!-- <div class="product-box">
+            <div class="product-image">
+                <div style="width:100px; height:130px; background-color:#f0f0f0; border:1px solid #ddd;"></div>
+            </div>
+            <div class="product-details">
+                <div class="product-name">Pack 2 pantaloni tuta basic</div>
+                <div class="product-meta">RIF. 5649/526</div>
+                <div class="product-meta">L | NERO</div>
+                <div class="product-meta">1 unità</div>
+                <div class="product-price">{{product_price}} &euro;</div>
+            </div>
+        </div> -->
+
+        {{items}}
+
+        <div class="summary-box">
+            <div class="label" style="margin-bottom:10px;">RIEPILOGO</div>
+            <div class="summary-row">
+                <div class="summary-label">Subtotale</div>
+                <div class="summary-value">{{subtotal}} &euro;</div>
+            </div>
+            <div class="summary-row">
+                <div class="summary-label">Spese di spedizione</div>
+                <div class="summary-value">0,00 &euro;</div>
+            </div>
+            <div class="summary-row">
+                <div class="summary-label">Sconto applicato</div>
+                <div class="summary-value">-0,00 &euro;</div>
+            </div>
+            <div class="summary-row total-row">
+                <div class="summary-label">TOTALE</div>
+                <div class="summary-value">{{total_price}} &euro;</div>
+            </div>
+            <div style="font-size: 8pt; color: #999; margin-top: 5px;">Tasse incluse (ove applicabili)</div>
+        </div>
+
+        <div class="footer">
+            BOOLCOMICS è un nome commerciale con il quale opera Boolcomics S.r.l., società di nazionalità italiana, con
+            sede legale in Roma,<br>
+            Via dei Fumetti n. 42, C.P. e P.I.V.A 12345678901, REA N. RM-123456.<br>
+            Si tratta di un'e-mail automatica. Per favore, non rispondere a questo messaggio.<br><br>
+            &copy; 2026 Boolcomics. All Rights Reserved.
+        </div>
+    </div>
+</body>
+
+</html>

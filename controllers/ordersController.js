@@ -1,4 +1,83 @@
+const e = require('cors');
 const connection = require('../database/db');
+
+const fs = require('fs');
+
+let htmlTemplateUser = fs.readFileSync('./email-template/order_email.html', 'utf8');
+let htmlTemplateAdmin = fs.readFileSync('./email-template/seller_email.html', 'utf8');
+
+const TOKEN = process.env.TOKEN || "token";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@demomailtrap.co";
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "admin_token";
+
+const { MailtrapClient } = require("mailtrap");
+function sendEmail(email, template, typeOfToken, data, orderedProducts) {
+
+    const { first_name, order_date, total_price, items } = data;
+
+    // Capitalize first_name
+    const capitalizedName = first_name.charAt(0).toUpperCase() + first_name.slice(1);
+
+    const date = new Date(order_date);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    let formatted_date = date.toLocaleDateString('it-IT', options);
+
+    let productsMarkup = "";
+    console.log(items);
+
+    orderedProducts.forEach(order => {
+        productsMarkup += `
+            <div class="product-box">
+                <div class="product-image">
+                    <!-- Placeholder image square -->
+                    <div style="width:100px; height:130px; background-color:#f0f0f0; border:1px solid #ddd;"></div>
+                </div>
+                <div class="product-details">
+                    <div class="product-name">${order.name}</div>
+                    <div class="product-meta">${order.slug}</div>
+                    <div class="product-meta">${order.description}</div>
+                    <div class="product-meta">${order.quantity} unità</div>
+                    <div class="product-price">${order.price} &euro;</div>
+                </div>
+            </div>
+        `
+    });
+
+
+    template = template
+        .replace('{{first_name}}', capitalizedName)
+        .replace('{{order_id}}', "ZX789W&-568WE")
+        .replace('{{order_date}}', formatted_date)
+        .replace('{{items}}', productsMarkup)
+        .replace('{{subtotal}}', total_price)
+        .replace('{{total_price}}', total_price);
+
+    const client = new MailtrapClient({
+        token: typeOfToken
+    });
+
+    const sender = {
+        email: "hello@demomailtrap.co",
+        name: "E-commerce",
+    };
+    const recipients = [
+        {
+            email: email,
+            name: "E-commerce"
+        }
+    ];
+
+    client
+        .send({
+            from: sender,
+            to: recipients,
+            subject: "Notifica",
+            html: template,
+            category: "Generale",
+        })
+        .then(console.log, console.error);
+
+}
 
 const index = (req, res) => {
     const sql = "SELECT * FROM orders";
@@ -29,9 +108,23 @@ const show = (req, res) => {
 const create = (req, res) => {
     const { first_name, last_name, email, address, total_price, status, items } = req.body;
 
-
     const shipping_address = address;
     const billing_address = address;
+
+    const order_date = new Date().toISOString().slice(0, 10);
+
+    const data = {
+        first_name,
+        last_name,
+        email,
+        status,
+        total_price,
+        shipping_address,
+        billing_address,
+        products: [],
+        order_date,
+        status
+    }
 
     // 1. VALIDAZIONE DATI
     if (!first_name || !last_name || !email || !status || !shipping_address || !billing_address || !Array.isArray(items)) {
@@ -47,112 +140,138 @@ const create = (req, res) => {
     // RECUPERO SLUGS DEI PRODOTTI PER CONTROLLO STOCK
     let productSql = `SELECT * FROM products WHERE slug IN (?)`;
 
-    const slugs = items.map(item => item.slug )
+    const slugs = items.filter(item => item.slug !== "").map(item => item.slug);
+
+    // If dupliated send error
+    if (new Set(slugs).size !== slugs.length) {
+        return res.status(400).json({ message: "Slug duplicati" });
+    }
+
+    if (slugs.length !== items.length) {
+        return res.status(400).json({ message: "Slug non validi" });
+    }
 
     connection.query(productSql, [slugs], (err, products) => {
         if (err) return res.status(500).json({ message: "Errore database", error: err.message });
 
-        if (products.length === 0) {
-            return res.status(400).json({ message: "Nessun prodotto trovato per gli slug forniti" });
+
+        if (products.length === 0 || products.length !== slugs.length) {
+            return res.status(400).json({ message: "Uno o più prodotti non trovati per gli slug forniti" });
         }
-        
-        const orderedProducts = products
+
+        const orderedProducts = products;
 
 
-        // CONTROLLO STOCK
-        const checkStockSql = `SELECT stock_quantity FROM products WHERE slug = ?`;
+        // Check if items quantity requested 0
+        const cleanItems = items.filter(item => item.quantity === 0);
 
+        if (cleanItems.length > 0) {
+            return res.status(400).json({
+                message: "Quantità non valida",
+                errors: cleanItems
+            });
+        }
+
+        // CONTROLLO STOCK IN MEMORIA
+        let stockErrors = [];
         orderedProducts.forEach(product => {
+            const item = items.find(i => i.slug === product.slug);
 
-            connection.query(checkStockSql, [product.slug], (err, results) => {
-                if (err) {
+            if (product.stock_quantity < item.quantity) {
+                stockErrors.push({
+                    slug: product.slug,
+                    available: product.stock_quantity,
+                    requested: item.quantity
+                });
+            } else {
+                product.quantity = item.quantity;
+                data.products.push(product);
+            }
+        });
+
+        if (stockErrors.length > 0) {
+            return res.status(400).json({
+                message: "Stock insufficiente",
+                errors: stockErrors
+            });
+        }
+
+        // CREAZIONE ORDINE
+        const orderSql = `
+            INSERT INTO orders 
+            (first_name, last_name, email, status, total_price, shipping_address, billing_address)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        connection.query(orderSql, [first_name, last_name, email, status, total_price, shipping_address, billing_address], (err2, result) => {
+            if (err2) {
+                return res.status(500).json({
+                    message: "Errore creazione ordine",
+                    error: err2.message
+                });
+            }
+
+            const orderId = result.insertId;
+
+            // INSERIMENTO ITEMS ORDINE (Bulk Insert)
+            const itemsSql = `
+                INSERT INTO order_items 
+                (order_id, product_id, quantity, price_at_purchase)
+                VALUES ?
+            `;
+
+            const itemsValues = orderedProducts.map(product => [
+                orderId,
+                product.id,
+                product.quantity,
+                product.price
+            ]);
+
+            connection.query(itemsSql, [itemsValues], (err3) => {
+                if (err3) {
                     return res.status(500).json({
-                        message: "Errore database",
-                        error: err.message
-                    });
-                }
-                const dbProduct = results[0];
-
-                //CONFRONTO STOCK CON QUANTITÀ RICHIESTA
-                const item = items.find(i => i.slug === product.slug);
-
-                if (item.quantity === 0) {
-                    return res.status(400).json({
-                        message: "Quantità non valida",
-                        product: {
-                            slug: product.slug,
-                            available: dbProduct ? dbProduct.stock_quantity : 0,
-                            requested: item.quantity
-                        }
+                        message: "Errore inserimento items",
+                        error: err3.message
                     });
                 }
 
+                // DECREMENTO STOCK
+                let completedUpdates = 0;
+                let hasUpdateErrors = false;
 
-                if (!dbProduct || dbProduct.stock_quantity < item.quantity) {
-                    return res.status(400).json({
-                        message: "Stock insufficiente",
-                        product: {
-                            slug: product.slug,
-                            available: dbProduct ? dbProduct.stock_quantity : 0,
-                            requested: item.quantity
-                        }
-                    });
-                }
+                orderedProducts.forEach(product => {
+                    const updateStockSql = `
+                        UPDATE products
+                        SET stock_quantity = stock_quantity - ?
+                        WHERE id = ?
+                    `;
 
-                // CREAZIONE ORDINE
-                const orderSql = `
-                    INSERT INTO orders 
-                    (first_name, last_name, email, status, total_price, shipping_address, billing_address)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                `;
-
-                connection.query(orderSql, [first_name, last_name, email, status, total_price, shipping_address, billing_address], (err2, result) => {
-                    if (err2) {
-                        return res.status(500).json({
-                            message: "Errore creazione ordine",
-                            error: err2.message
-                        });
-                    }
-                    const orderId = result.insertId;
-
-                    // INSERIMENTO ITEMS ORDINE
-                    const itemsSql = `
-                    INSERT INTO order_items 
-                    (order_id, product_id, quantity, price_at_purchase)
-                    VALUES (?, ?, ?, ?)
-                `;
-
-                    connection.query(itemsSql, [orderId, product.id, item.quantity, product.price], (err3) => {
-                        if (err3) {
-                            return res.status(500).json({
-                                message: "Errore inserimento items",
-                                error: err3.message
-                            });
-                        }
-
-                        // DECREMENTO STOCK
-                        const updateStockSql = `
-                            UPDATE products
-                            SET stock_quantity = stock_quantity - ?
-                            WHERE id = ?
-                        `;
-                        connection.query(updateStockSql, [item.quantity, product.id], (err4) => {
-                            if (err4) {
-                                console.log("Errore stock:", err4);
+                    connection.query(updateStockSql, [product.quantity, product.id], (err4) => {
+                        if (err4) {
+                            console.log("Errore stock:", err4);
+                            if (!hasUpdateErrors) {
+                                hasUpdateErrors = true;
+                                return res.status(500).json({ message: "Errore aggiornamento stock", error: err4.message });
                             }
-                            
-                            return res.json({
-                                message: "Ordine creato con successo",
-                                orderId,
-                                total_price
-                            });
-                        })
-                        
-                    })
-                })
+                        }
 
-            })
-        })
+                        if (!hasUpdateErrors) {
+                            completedUpdates++;
+                            // Quando tutti gli update dello stock sono completati
+                            if (completedUpdates === orderedProducts.length) {
+                                sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts);
+                                sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data, orderedProducts); 
+
+                                return res.json({
+                                    message: "Ordine creato con successo",
+                                    total_price
+                                });
+                            }
+                        }
+                    });
+                });
+            });
+        });
     })
 
 }
