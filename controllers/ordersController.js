@@ -140,13 +140,20 @@ const create = (req, res) => {
     // RECUPERO SLUGS DEI PRODOTTI PER CONTROLLO STOCK
     let productSql = `SELECT * FROM products WHERE slug IN (?)`;
 
-    const slugs = items.map(item => item.slug)
+    const slugs = items.filter(item => item.slug !== "").map(item => item.slug);
+   
+   
+    
+    if(slugs.length !== items.length) {
+        return res.status(400).json({ message: "Slug non validi" });
+    }
 
     connection.query(productSql, [slugs], (err, products) => {
         if (err) return res.status(500).json({ message: "Errore database", error: err.message });
-
+        
+        
         if (products.length === 0) {
-            return res.status(400).json({ message: "Nessun prodotto trovato per gli slug forniti" });
+            return res.status(400).json({ message: "Uno o più prodotti non trovati per gli slug forniti" });
         }
 
         const orderedProducts = products
@@ -158,7 +165,9 @@ const create = (req, res) => {
         const checkStockSql = `SELECT stock_quantity FROM products WHERE slug = ?`;
 
         orderedProducts.forEach((product, index) => {
-
+            
+            
+           
             data["products"].push(product);
             data["products"][index]["quantity"] = items[index].quantity;
 
@@ -173,6 +182,8 @@ const create = (req, res) => {
 
                 //CONFRONTO STOCK CON QUANTITÀ RICHIESTA
                 const item = items.find(i => i.slug === product.slug);
+                
+                
                 
                 if (!dbProduct || dbProduct.stock_quantity < item.quantity) {
                     return res.status(400).json({
@@ -237,7 +248,7 @@ const create = (req, res) => {
             })
         })
         
-        sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts);
+        /* sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts); */
         /* sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data); */
         return res.json({
             message: "Ordine creato con successo",
