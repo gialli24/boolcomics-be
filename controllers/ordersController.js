@@ -8,12 +8,12 @@ let htmlTemplateAdmin = fs.readFileSync('./email-template/seller_email.html', 'u
 
 const TOKEN = process.env.TOKEN || "token";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@demomailtrap.co";
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "admin_token";
 
 const { MailtrapClient } = require("mailtrap");
-function sendEmail(email, template, typeOfToken, data) {
+function sendEmail(email, template, typeOfToken, data, orderedProducts) {
 
-    const { first_name, order_date, total_price, products } = data;
+    const { first_name, order_date, total_price, items } = data;
 
     // Capitalize first_name
     const capitalizedName = first_name.charAt(0).toUpperCase() + first_name.slice(1);
@@ -23,8 +23,9 @@ function sendEmail(email, template, typeOfToken, data) {
     let formatted_date = date.toLocaleDateString('it-IT', options);
 
     let productsMarkup = "";
-
-    products.forEach(product => {
+    console.log(items);
+    
+    orderedProducts.forEach(order => {
         productsMarkup += `
             <div class="product-box">
                 <div class="product-image">
@@ -32,11 +33,11 @@ function sendEmail(email, template, typeOfToken, data) {
                     <div style="width:100px; height:130px; background-color:#f0f0f0; border:1px solid #ddd;"></div>
                 </div>
                 <div class="product-details">
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-meta">${product.slug}</div>
-                    <div class="product-meta">${product.description}</div>
-                    <div class="product-meta">${product.quantity} unità</div>
-                    <div class="product-price">${product.price} &euro;</div>
+                    <div class="product-name">${order.name}</div>
+                    <div class="product-meta">${order.slug}</div>
+                    <div class="product-meta">${order.description}</div>
+                    <div class="product-meta">${order.quantity} unità</div>
+                    <div class="product-price">${order.price} &euro;</div>
                 </div>
             </div>
         `
@@ -149,7 +150,9 @@ const create = (req, res) => {
         }
 
         const orderedProducts = products
-
+        
+        
+        
 
         // CONTROLLO STOCK
         const checkStockSql = `SELECT stock_quantity FROM products WHERE slug = ?`;
@@ -170,6 +173,7 @@ const create = (req, res) => {
 
                 //CONFRONTO STOCK CON QUANTITÀ RICHIESTA
                 const item = items.find(i => i.slug === product.slug);
+                
                 if (!dbProduct || dbProduct.stock_quantity < item.quantity) {
                     return res.status(400).json({
                         message: "Stock insufficiente",
@@ -223,14 +227,8 @@ const create = (req, res) => {
                                 console.log("Errore stock:", err4);
                             }
 
-                            sendEmail(email, htmlTemplateUser, TOKEN, data);
-                            /* sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data); */
 
-                            return res.json({
-                                message: "Ordine creato con successo",
-                                orderId,
-                                total_price
-                            });
+
                         })
 
                     })
@@ -238,6 +236,13 @@ const create = (req, res) => {
 
             })
         })
+        
+        sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts);
+        /* sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data); */
+        return res.json({
+            message: "Ordine creato con successo",
+            total_price
+        });
     })
 
 }
