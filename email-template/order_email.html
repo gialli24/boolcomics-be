@@ -181,9 +181,8 @@
             <div class="value">{{order_date}}</div>
         </div>
 
-        <div class="product-box">
+        <!-- <div class="product-box">
             <div class="product-image">
-                <!-- Placeholder image square -->
                 <div style="width:100px; height:130px; background-color:#f0f0f0; border:1px solid #ddd;"></div>
             </div>
             <div class="product-details">
@@ -191,27 +190,29 @@
                 <div class="product-meta">RIF. 5649/526</div>
                 <div class="product-meta">L | NERO</div>
                 <div class="product-meta">1 unità</div>
-                <div class="product-price">25,99 &euro;</div>
+                <div class="product-price">{{product_price}} &euro;</div>
             </div>
-        </div>
+        </div> -->
+
+        {{items}}
 
         <div class="summary-box">
             <div class="label" style="margin-bottom:10px;">RIEPILOGO</div>
             <div class="summary-row">
                 <div class="summary-label">Subtotale</div>
-                <div class="summary-value">25,99 &euro;</div>
+                <div class="summary-value">{{subtotal}} &euro;</div>
             </div>
             <div class="summary-row">
                 <div class="summary-label">Spese di spedizione</div>
-                <div class="summary-value">3,99 &euro;</div>
+                <div class="summary-value">0,00 &euro;</div>
             </div>
             <div class="summary-row">
                 <div class="summary-label">Sconto applicato</div>
-                <div class="summary-value">-5,98 &euro;</div>
+                <div class="summary-value">-0,00 &euro;</div>
             </div>
             <div class="summary-row total-row">
                 <div class="summary-label">TOTALE</div>
-                <div class="summary-value">24,00 &euro;</div>
+                <div class="summary-value">{{total_price}} &euro;</div>
             </div>
             <div style="font-size: 8pt; color: #999; margin-top: 5px;">Tasse incluse (ove applicabili)</div>
         </div>

@@ -13,10 +13,43 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN
 const { MailtrapClient } = require("mailtrap");
 function sendEmail(email, template, typeOfToken, data) {
 
+    const { first_name, order_date, total_price, products } = data;
+
+    // Capitalize first_name
+    const capitalizedName = first_name.charAt(0).toUpperCase() + first_name.slice(1);
+
+    const date = new Date(order_date);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    let formatted_date = date.toLocaleDateString('it-IT', options);
+
+    let productsMarkup = "";
+
+    products.forEach(product => {
+        productsMarkup += `
+            <div class="product-box">
+                <div class="product-image">
+                    <!-- Placeholder image square -->
+                    <div style="width:100px; height:130px; background-color:#f0f0f0; border:1px solid #ddd;"></div>
+                </div>
+                <div class="product-details">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-meta">${product.slug}</div>
+                    <div class="product-meta">${product.description}</div>
+                    <div class="product-meta">${product.quantity} unità</div>
+                    <div class="product-price">${product.price} &euro;</div>
+                </div>
+            </div>
+        `
+    });
+
+
     template = template
-        .replace('{{first_name}}', data.first_name)
+        .replace('{{first_name}}', capitalizedName)
         .replace('{{order_id}}', "ZX789W&-568WE")
-        .replace('{{order_date}}', data.order_date);
+        .replace('{{order_date}}', formatted_date)
+        .replace('{{items}}', productsMarkup)
+        .replace('{{subtotal}}', total_price)
+        .replace('{{total_price}}', total_price);
 
     const client = new MailtrapClient({
         token: typeOfToken
@@ -87,7 +120,7 @@ const create = (req, res) => {
         total_price,
         shipping_address,
         billing_address,
-        items,
+        products: [],
         order_date,
         status
     }
@@ -121,7 +154,10 @@ const create = (req, res) => {
         // CONTROLLO STOCK
         const checkStockSql = `SELECT stock_quantity FROM products WHERE slug = ?`;
 
-        orderedProducts.forEach(product => {
+        orderedProducts.forEach((product, index) => {
+
+            data["products"].push(product);
+            data["products"][index]["quantity"] = items[index].quantity;
 
             connection.query(checkStockSql, [product.slug], (err, results) => {
                 if (err) {
