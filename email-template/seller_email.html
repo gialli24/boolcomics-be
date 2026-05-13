@@ -3,173 +3,153 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            color: #1a1a1a;
-            line-height: 1.5;
+            color: #333;
+            line-height: 1.6;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+            background-color: #ffffff;
         }
 
         .container {
             max-width: 600px;
-            margin: 40px auto;
-            padding: 40px;
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
+            margin: 0 auto;
+            padding: 20px;
         }
 
         .header {
-            text-align: left;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #1a1a1a;
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
         }
 
         .header h1 {
-            font-size: 22pt;
-            letter-spacing: 6px;
+            font-size: 28pt;
+            letter-spacing: 4px;
             margin: 0;
-            font-weight: 900;
-            text-transform: uppercase;
-        }
-
-        .status-badge {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 5px 12px;
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            font-size: 8pt;
             font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border-radius: 20px;
         }
 
-        .main-title {
-            font-size: 14pt;
+        .title {
+            text-align: center;
             font-weight: bold;
-            margin: 15px 0 30px 0;
             text-transform: uppercase;
+            margin: 30px 0;
+            font-size: 12pt;
         }
 
-        .order-meta-grid {
-            display: table;
-            width: 100%;
+        .content {
+            font-size: 10pt;
             margin-bottom: 30px;
         }
 
-        .meta-column {
-            display: table-cell;
-            width: 50%;
+        .content p {
+            margin-bottom: 15px;
+        }
+
+        .order-info {
+            text-align: center;
+            margin: 30px 0;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .order-info div {
+            margin-bottom: 10px;
         }
 
         .label {
-            font-size: 7pt;
-            color: #999;
+            font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 4px;
+            font-size: 9pt;
         }
 
         .value {
             font-size: 10pt;
-            font-weight: 600;
         }
 
-        .product-card {
-            margin-top: 30px;
-            padding: 20px 0;
-            border-top: 1px solid #eee;
-        }
-
-        .product-table {
+        .product-box {
             display: table;
             width: 100%;
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
         }
 
-        .product-img {
+        .product-image {
             display: table-cell;
-            width: 80px;
-            vertical-align: middle;
+            width: 120px;
+            vertical-align: top;
         }
 
-        .product-info {
+        .product-image img {
+            width: 100px;
+            background-color: #f4f4f4;
+        }
+
+        .product-details {
             display: table-cell;
-            vertical-align: middle;
+            vertical-align: top;
             padding-left: 20px;
         }
 
-        .p-name {
-            font-size: 11pt;
+        .product-name {
             font-weight: bold;
-            margin: 0;
+            font-size: 10pt;
         }
 
-        .p-sku {
+        .product-meta {
             font-size: 9pt;
             color: #666;
+            margin-top: 5px;
         }
 
-        .p-price {
-            display: table-cell;
-            vertical-align: middle;
+        .product-price {
             text-align: right;
             font-weight: bold;
-            font-size: 11pt;
+            margin-top: 40px;
         }
 
-        .shipping-box {
-            margin-top: 30px;
+        .summary-box {
+            background-color: #fafafa;
             padding: 20px;
-            border: 1px solid #eee;
-            border-left: 4px solid #1a1a1a;
-            background-color: #fcfcfc;
-        }
-
-        .summary-section {
             margin-top: 30px;
-            text-align: right;
+            border: 1px solid #eee;
         }
 
-        .summary-line {
+        .summary-row {
+            display: table;
+            width: 100%;
             font-size: 10pt;
             margin-bottom: 5px;
         }
 
-        .total-line {
-            font-size: 14pt;
-            font-weight: 900;
-            margin-top: 10px;
-            border-top: 1px solid #1a1a1a;
+        .summary-label {
+            display: table-cell;
+        }
+
+        .summary-value {
+            display: table-cell;
+            text-align: right;
+        }
+
+        .total-row {
+            margin-top: 15px;
+            border-top: 1px solid #ddd;
             padding-top: 10px;
-        }
-
-        .button-container {
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        .btn {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            padding: 18px 40px;
-            text-decoration: none;
-            font-size: 9pt;
             font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 12pt;
         }
 
         .footer {
+            font-size: 7pt;
+            color: #999;
             text-align: center;
-            font-size: 8pt;
-            color: #bbb;
-            margin-top: 60px;
-            letter-spacing: 0.5px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
         }
     </style>
 </head>
@@ -180,56 +160,65 @@
             <h1>BOOLCOMICS</h1>
         </div>
 
-        <div class="status-badge">● Pronto per la spedizione</div>
-        <div class="main-title">Hai venduto un articolo</div>
+        <div class="title">NUOVO ORDINE RICEVUTO</div>
 
-        <div class="order-meta-grid">
-            <div class="meta-column">
-                <div class="label">ID Ordine</div>
-                <div class="value">#882-99102</div>
-            </div>
-            <div class="meta-column">
-                <div class="label">Data</div>
-                <div class="value">12 Maggio 2026</div>
-            </div>
+        <div class="content">
+            <p>Ciao Amministratore,</p>
+            <p>Ti informiamo che un nuovo ordine è stato effettuato da {{first_name}} ed è stato registrato
+                correttamente nel sistema.</p>
+            <p>Prepara gli articoli elencati di seguito per procedere con la spedizione il prima possibile.</p>
+            <p>Il team di Boolcomics.</p>
         </div>
 
-        <div class="product-card">
-            <div class="product-table">
-                <div class="product-img">
-                    <div style="width:70px; height:70px; background-color:#f4f4f4; border-radius:4px;"></div>
-                </div>
-                <div class="product-info">
-                    <p class="p-name">Spider-Man: Blue (Hardcover)</p>
-                    <p class="p-sku">SKU: MARV-0922-BL</p>
-                </div>
-                <div class="p-price">32,00 &euro;</div>
+        <div class="order-info">
+            <div class="label">ORDINE N.</div>
+            <div class="value">{{order_id}}</div>
+            <div class="label">DATA ORDINE:</div>
+            <div class="value">{{order_date}}</div>
+        </div>
+
+        <!-- <div class="product-box">
+            <div class="product-image">
+                <div style="width:100px; height:130px; background-color:#f0f0f0; border:1px solid #ddd;"></div>
             </div>
-        </div>
-
-        <div class="shipping-box">
-            <div class="label" style="color:#1a1a1a; margin-bottom: 8px;">Destinatario</div>
-            <div class="value" style="font-weight: normal;">
-                <strong>Marco Rossi</strong><br>
-                Via della Moscova, 12<br>
-                20121 Milano (MI)
+            <div class="product-details">
+                <div class="product-name">Pack 2 pantaloni tuta basic</div>
+                <div class="product-meta">RIF. 5649/526</div>
+                <div class="product-meta">L | NERO</div>
+                <div class="product-meta">1 unità</div>
+                <div class="product-price">{{product_price}} &euro;</div>
             </div>
-        </div>
+        </div> -->
 
-        <div class="summary-section">
-            <div class="summary-line">Prezzo articolo: 32,00 &euro;</div>
-            <div class="summary-line" style="color: #e74c3c;">Commissione venditore: -3,20 &euro;</div>
-            <div class="total-line">TUO RICAVO: 28,80 &euro;</div>
-        </div>
+        {{items}}
 
-        <div class="button-container">
-            <a href="#" class="btn">Vai ai dettagli vendita</a>
+        <div class="summary-box">
+            <div class="label" style="margin-bottom:10px;">RIEPILOGO</div>
+            <div class="summary-row">
+                <div class="summary-label">Subtotale</div>
+                <div class="summary-value">{{subtotal}} &euro;</div>
+            </div>
+            <div class="summary-row">
+                <div class="summary-label">Spese di spedizione</div>
+                <div class="summary-value">0,00 &euro;</div>
+            </div>
+            <div class="summary-row">
+                <div class="summary-label">Sconto applicato</div>
+                <div class="summary-value">-0,00 &euro;</div>
+            </div>
+            <div class="summary-row total-row">
+                <div class="summary-label">TOTALE</div>
+                <div class="summary-value">{{total_price}} &euro;</div>
+            </div>
+            <div style="font-size: 8pt; color: #999; margin-top: 5px;">Tasse incluse (ove applicabili)</div>
         </div>
 
         <div class="footer">
-            &copy; 2026 BOOLCOMICS MARKETPLACE<br>
-            Questa è una comunicazione riservata ai venditori partner.<br>
-            Non rispondere a questa email.
+            BOOLCOMICS è un nome commerciale con il quale opera Boolcomics S.r.l., società di nazionalità italiana, con
+            sede legale in Roma,<br>
+            Via dei Fumetti n. 42, C.P. e P.I.V.A 12345678901, REA N. RM-123456.<br>
+            Si tratta di un'e-mail automatica. Per favore, non rispondere a questo messaggio.<br><br>
+            &copy; 2026 Boolcomics. All Rights Reserved.
         </div>
     </div>
 </body>
