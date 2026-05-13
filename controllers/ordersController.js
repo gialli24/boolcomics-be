@@ -75,6 +75,19 @@ const create = (req, res) => {
 
                 //CONFRONTO STOCK CON QUANTITÀ RICHIESTA
                 const item = items.find(i => i.slug === product.slug);
+
+                if (item.quantity === 0) {
+                    return res.status(400).json({
+                        message: "Quantità non valida",
+                        product: {
+                            slug: product.slug,
+                            available: dbProduct ? dbProduct.stock_quantity : 0,
+                            requested: item.quantity
+                        }
+                    });
+                }
+
+
                 if (!dbProduct || dbProduct.stock_quantity < item.quantity) {
                     return res.status(400).json({
                         message: "Stock insufficiente",
