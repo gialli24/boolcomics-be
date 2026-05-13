@@ -260,7 +260,7 @@ const create = (req, res) => {
                             // Quando tutti gli update dello stock sono completati
                             if (completedUpdates === orderedProducts.length) {
                                 sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts);
-                                sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data, orderedProducts); 
+                                sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data, orderedProducts);
 
                                 return res.json({
                                     message: "Ordine creato con successo",
