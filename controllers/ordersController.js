@@ -50,9 +50,9 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
         .replace('{{order_id}}', "ZX789W&-568WE")
         .replace('{{order_date}}', formatted_date)
         .replace('{{items}}', productsMarkup)
-        .replace('{{subtotal}}', productsPrice.toFixed(2))
-        .replace('{{total_price}}', total_price.toFixed(2))
-        .replace('{{shipping_cost}}', shipping_cost.toFixed(2));
+        .replace('{{subtotal}}', Math.floor(productsPrice * 100) / 100)
+        .replace('{{total_price}}', Math.floor(total_price * 100) / 100)
+        .replace('{{shipping_cost}}', Math.floor(shipping_cost * 100) / 100 );
 
     const client = new MailtrapClient({
         token: typeOfToken
@@ -111,8 +111,8 @@ const create = (req, res) => {
     const { first_name, last_name, email, address, status, items } = req.body;
     let { total_price, shipping_cost } = req.body;
 
-    total_price = parseInt(total_price)
-    shipping_cost = parseInt(shipping_cost)
+    total_price = Number(total_price)
+    shipping_cost = Number(shipping_cost)
     
     
     
