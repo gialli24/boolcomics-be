@@ -50,8 +50,8 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
         .replace('{{order_id}}', "ZX789W&-568WE")
         .replace('{{order_date}}', formatted_date)
         .replace('{{items}}', productsMarkup)
-        .replace('{{subtotal}}', productsPrice)
-        .replace('{{total_price}}', total_price)
+        .replace('{{subtotal}}', productsPrice.toFixed(2))
+        .replace('{{total_price}}', total_price.toFixed(2))
         .replace('{{shipping_cost}}', shipping_cost);
 
     const client = new MailtrapClient({
