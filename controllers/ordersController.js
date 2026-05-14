@@ -13,8 +13,9 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "admin_token";
 const { MailtrapClient } = require("mailtrap");
 function sendEmail(email, template, typeOfToken, data, orderedProducts) {
 
-    const { first_name, order_date, total_price, items } = data;
-
+    const { first_name, order_date, total_price, shipping_cost, productsPrice, items } = data;
+     
+    
     // Capitalize first_name
     const capitalizedName = first_name.charAt(0).toUpperCase() + first_name.slice(1);
 
@@ -23,7 +24,7 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
     let formatted_date = date.toLocaleDateString('it-IT', options);
 
     let productsMarkup = "";
-    console.log(items);
+   
 
     orderedProducts.forEach(order => {
         productsMarkup += `
@@ -49,8 +50,9 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
         .replace('{{order_id}}', "ZX789W&-568WE")
         .replace('{{order_date}}', formatted_date)
         .replace('{{items}}', productsMarkup)
-        .replace('{{subtotal}}', total_price)
-        .replace('{{total_price}}', total_price);
+        .replace('{{subtotal}}', productsPrice)
+        .replace('{{total_price}}', total_price)
+        .replace('{{shipping_cost}}', shipping_cost);
 
     const client = new MailtrapClient({
         token: typeOfToken
@@ -106,8 +108,14 @@ const show = (req, res) => {
 }
 
 const create = (req, res) => {
-    const { first_name, last_name, email, address, total_price, status, items } = req.body;
+    const { first_name, last_name, email, address, status, items } = req.body;
+    let { total_price, shipping_cost } = req.body;
 
+    total_price = parseInt(total_price)
+    shipping_cost = parseInt(shipping_cost)
+    
+    
+    
     const shipping_address = address;
     const billing_address = address;
     
@@ -119,12 +127,17 @@ const create = (req, res) => {
 
     // VALIDAZIONE EMAIL
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(!email.test(emailRegex)) return res.status(400).json({ message: 'Formato email non valido' });
+    if(!emailRegex.test(email)) return res.status(400).json({ message: 'Formato email non valido' });
 
     // VALIDAZIONE NOME E COGNOME
     if(first_name.length < 3 || last_name.length < 3) return res.status(400).json({ message: 'Nome e cognome devono avere almeno 3 caratteri' });
 
+    const productsPrice =  total_price - shipping_cost
     
+    
+    if(parseInt(shipping_cost )=== 0 && parseInt(productsPrice) <= 50) return res.status(403).json({message: 'Spedizione gratutita non applicabile' })
+
+      
     const order_date = new Date().toISOString().slice(0, 10);
 
     const data = {
@@ -133,6 +146,8 @@ const create = (req, res) => {
         email,
         status,
         total_price,
+        shipping_cost,
+        productsPrice,
         shipping_address,
         billing_address,
         products: [],
@@ -269,7 +284,9 @@ const create = (req, res) => {
                             // Quando tutti gli update dello stock sono completati
                             if (completedUpdates === orderedProducts.length) {
                                 sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts);
-                                sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data, orderedProducts);
+                                /* sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data, orderedProducts); */
+                                
+                                
 
                                 return res.json({
                                     message: "Ordine creato con successo",
