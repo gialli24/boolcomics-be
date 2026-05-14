@@ -134,9 +134,9 @@ const create = (req, res) => {
 
     const productsPrice =  total_price - shipping_cost
     
-    
-    if(parseInt(shipping_cost )=== 0 && parseInt(productsPrice) <= 50) return res.status(403).json({message: 'Spedizione gratutita non applicabile' })
-
+    // VALIDAZIONE SPEDIZIONE GRATUITA 
+    if(parseInt(shipping_cost) === 0 && parseInt(productsPrice) <= 50) return res.status(403).json({message: 'Spedizione gratutita non applicabile' })
+    if(parseInt(shipping_cost) !== 0 && parseInt(productsPrice) > 50) return res.status(403).json({message: 'Spedizione non gratuita applicabile'})
       
     const order_date = new Date().toISOString().slice(0, 10);
 
