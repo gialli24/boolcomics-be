@@ -52,7 +52,7 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
         .replace('{{items}}', productsMarkup)
         .replace('{{subtotal}}', productsPrice.toFixed(2))
         .replace('{{total_price}}', total_price.toFixed(2))
-        .replace('{{shipping_cost}}', shipping_cost);
+        .replace('{{shipping_cost}}', shipping_cost.toFixed(2));
 
     const client = new MailtrapClient({
         token: typeOfToken
