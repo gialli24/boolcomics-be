@@ -115,10 +115,6 @@ const create = (req, res) => {
         address,
         status,
         items,
-        street,
-        city,
-        zip_code,
-        country,
         card_name,
         card_number,
         card_expiry,
@@ -132,11 +128,6 @@ const create = (req, res) => {
     // NORMALIZZAZIONE DATI
     total_price = Number(total_price)
     shipping_cost = Number(shipping_cost)
-    
-    
-    
-    
-
     const shipping_address = address;
     const billing_address = address;
 
@@ -157,22 +148,6 @@ const create = (req, res) => {
             const value = Number(element);
 
             if (isNaN(value)) return res.status(400).json({ message: `Il campo ${key} deve essere un numero valido` })
-        }
-
-        // Validazione indirizzo
-        if (key === 'zip_code') {
-            const zipCodeRegex = /^\d{5}$/;
-            if (!zipCodeRegex.test(element)) return res.status(400).json({ message: 'CAP non valido' })
-        }
-
-        if(key === 'street' || key === 'city') {
-            if (element.length < 3) return res.status(400).json({ message: 'Via non valida o città non valida, devono avere almeno 3 caratteri' })
-        }
-
-        if (key === 'state') {
-            const stateRegex = /^[A-Z]{2}$/;
-            if (!stateRegex.test(element.toUpperCase())) return res.status(400).json({ message: 'Stato non valido, deve essere composto da 2 lettere maiuscole' })
-            
         }
 
         // Validazione carta di credito
@@ -198,10 +173,6 @@ const create = (req, res) => {
 
     }
 
-
-    
-    
-    
 
     // VALIDAZIONE EMAIL
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
