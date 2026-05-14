@@ -14,8 +14,8 @@ const { MailtrapClient } = require("mailtrap");
 function sendEmail(email, template, typeOfToken, data, orderedProducts) {
 
     const { first_name, order_date, total_price, shipping_cost, productsPrice, items } = data;
-     
-    
+
+
     // Capitalize first_name
     const capitalizedName = first_name.charAt(0).toUpperCase() + first_name.slice(1);
 
@@ -24,7 +24,7 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
     let formatted_date = date.toLocaleDateString('it-IT', options);
 
     let productsMarkup = "";
-   
+
 
     orderedProducts.forEach(order => {
         productsMarkup += `
@@ -52,7 +52,7 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
         .replace('{{items}}', productsMarkup)
         .replace('{{subtotal}}', Math.floor(productsPrice * 100) / 100)
         .replace('{{total_price}}', Math.floor(total_price * 100) / 100)
-        .replace('{{shipping_cost}}', Math.floor(shipping_cost * 100) / 100 );
+        .replace('{{shipping_cost}}', Math.floor(shipping_cost * 100) / 100);
 
     const client = new MailtrapClient({
         token: typeOfToken
@@ -108,36 +108,98 @@ const show = (req, res) => {
 }
 
 const create = (req, res) => {
-    const { first_name, last_name, email, address, status, items } = req.body;
+    const {
+        first_name,
+        last_name,
+        email,
+        address,
+        status,
+        items,
+        street,
+        city,
+        state,
+        zip_code,
+        country,
+        card_name,
+        card_number,
+        card_expiry,
+        card_cvv
+
+    } = req.body;
+
     let { total_price, shipping_cost } = req.body;
+
+
 
     total_price = Number(total_price)
     shipping_cost = Number(shipping_cost)
-    
-    
-    
+
+
+
     const shipping_address = address;
     const billing_address = address;
-    
-    // VALIDAZIONE DATI
-    if (!first_name || !last_name || !email || !status || !shipping_address || !billing_address || !Array.isArray(items)) {
 
-        return res.status(400).json({ message: "Dati mancanti o prodotti non validi" });
+    // VALIDAZIONE DATI
+    for (const key in req.body) {
+
+        const element = req.body[key]
+
+
+        // Controllo campi vuoti
+        if (!element) return res.status(400).json({ message: "Dati mancanti o prodotti non validi" });
+
+        // Validazione items
+        if (key === 'items' && (!Array.isArray(items) || element.length === 0)) return res.status(400).json({ message: 'Prodotti non validi' })
+
+        // Validazione numerica per total_price e shipping_cost    
+        if (key === 'total_price' || key === 'shipping_cost') {
+            const value = Number(element);
+
+            if (isNaN(value)) return res.status(400).json({ message: `Il campo ${key} deve essere un numero valido` })
+        }
+
+        // Validazione zip code (5 cifre)
+        if (key === 'zip_code') {
+            const zipCodeRegex = /^\d{5}$/;
+            if (!zipCodeRegex.test(element)) return res.status(400).json({ message: 'CAP non valido' })
+        }
+
+        // Validazione card 
+        if (key === 'card_number') {
+            const cardNumberRegex = /^\d{16}$/;
+            if (!cardNumberRegex.test(element)) return res.status(400).json({ message: 'Numero di carta non valido' })
+        }
+
+        if (key === 'card_expiry') {
+            const cardExpiryRegex = /^(0[1-9]|1[0-2])\/\d{2}$/;
+            if (!cardExpiryRegex.test(element)) return res.status(400).json({ message: 'Data di scadenza non valida' })
+        }
+        if (key === 'card_cvv') {
+            const cardCvvRegex = /^\d{3}$/;
+            if (!cardCvvRegex.test(element)) return res.status(400).json({ message: 'CVV non valido' })
+        }
+
+
+
     }
+
+
+
+    
 
     // VALIDAZIONE EMAIL
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(!emailRegex.test(email)) return res.status(400).json({ message: 'Formato email non valido' });
+    if (!emailRegex.test(email)) return res.status(400).json({ message: 'Formato email non valido' });
 
     // VALIDAZIONE NOME E COGNOME
-    if(first_name.length < 3 || last_name.length < 3) return res.status(400).json({ message: 'Nome e cognome devono avere almeno 3 caratteri' });
+    if (first_name.length < 3 || last_name.length < 3) return res.status(400).json({ message: 'Nome e cognome devono avere almeno 3 caratteri' });
 
-    const productsPrice =  total_price - shipping_cost
-    
+    const productsPrice = total_price - shipping_cost
+
     // VALIDAZIONE SPEDIZIONE GRATUITA 
-    if(parseInt(shipping_cost) === 0 && parseInt(productsPrice) <= 50) return res.status(403).json({message: 'Spedizione gratutita non applicabile' })
-    if(parseInt(shipping_cost) !== 0 && parseInt(productsPrice) > 50) return res.status(403).json({message: 'Spedizione non gratuita applicabile'})
-      
+    if (parseInt(shipping_cost) === 0 && parseInt(productsPrice) <= 50) return res.status(403).json({ message: 'Spedizione gratutita non applicabile' })
+    if (parseInt(shipping_cost) !== 0 && parseInt(productsPrice) > 50) return res.status(403).json({ message: 'Spedizione non gratuita applicabile' })
+
     const order_date = new Date().toISOString().slice(0, 10);
 
     const data = {
@@ -283,10 +345,10 @@ const create = (req, res) => {
                             completedUpdates++;
                             // Quando tutti gli update dello stock sono completati
                             if (completedUpdates === orderedProducts.length) {
-                                sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts);
+                               /*  sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts); */
                                 /* sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data, orderedProducts); */
-                                
-                                
+
+
 
                                 return res.json({
                                     message: "Ordine creato con successo",
