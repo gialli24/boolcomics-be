@@ -117,7 +117,6 @@ const create = (req, res) => {
         items,
         street,
         city,
-        state,
         zip_code,
         country,
         card_name,
@@ -127,14 +126,16 @@ const create = (req, res) => {
 
     } = req.body;
 
-    let { total_price, shipping_cost } = req.body;
+    let { total_price, shipping_cost, state } = req.body;
 
 
-
+    // NORMALIZZAZIONE DATI
     total_price = Number(total_price)
     shipping_cost = Number(shipping_cost)
-
-
+    
+    
+    
+    
 
     const shipping_address = address;
     const billing_address = address;
@@ -158,13 +159,27 @@ const create = (req, res) => {
             if (isNaN(value)) return res.status(400).json({ message: `Il campo ${key} deve essere un numero valido` })
         }
 
-        // Validazione zip code (5 cifre)
+        // Validazione indirizzo
         if (key === 'zip_code') {
             const zipCodeRegex = /^\d{5}$/;
             if (!zipCodeRegex.test(element)) return res.status(400).json({ message: 'CAP non valido' })
         }
 
-        // Validazione card 
+        if(key === 'street' || key === 'city') {
+            if (element.length < 3) return res.status(400).json({ message: 'Via non valida o città non valida, devono avere almeno 3 caratteri' })
+        }
+
+        if (key === 'state') {
+            const stateRegex = /^[A-Z]{2}$/;
+            if (!stateRegex.test(element.toUpperCase())) return res.status(400).json({ message: 'Stato non valido, deve essere composto da 2 lettere maiuscole' })
+            
+        }
+
+        // Validazione carta di credito
+        if (key === 'card_name') {
+            if (element.length < 3) return res.status(400).json({ message: 'Nome sulla carta non valido' })
+        }
+
         if (key === 'card_number') {
             const cardNumberRegex = /^\d{16}$/;
             if (!cardNumberRegex.test(element)) return res.status(400).json({ message: 'Numero di carta non valido' })
@@ -184,7 +199,8 @@ const create = (req, res) => {
     }
 
 
-
+    
+    
     
 
     // VALIDAZIONE EMAIL
