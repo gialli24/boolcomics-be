@@ -119,7 +119,7 @@ const create = (req, res) => {
 
     // VALIDAZIONE EMAIL
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(!email.test(emailRegex)) return res.status(400).json({ message: 'Formato email non valido' });
+    if(!emailRegex.test(email)) return res.status(400).json({ message: 'Formato email non valido' });
 
     // VALIDAZIONE NOME E COGNOME
     if(first_name.length < 3 || last_name.length < 3) return res.status(400).json({ message: 'Nome e cognome devono avere almeno 3 caratteri' });
