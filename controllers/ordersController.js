@@ -122,7 +122,7 @@ const create = (req, res) => {
 
     } = req.body;
 
-    let { total_price, shipping_cost, state } = req.body;
+    let { total_price, shipping_cost } = req.body;
 
 
     // NORMALIZZAZIONE DATI
