@@ -110,7 +110,21 @@ const create = (req, res) => {
 
     const shipping_address = address;
     const billing_address = address;
+    
+    // VALIDAZIONE DATI
+    if (!first_name || !last_name || !email || !status || !shipping_address || !billing_address || !Array.isArray(items)) {
 
+        return res.status(400).json({ message: "Dati mancanti o prodotti non validi" });
+    }
+
+    // VALIDAZIONE EMAIL
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(!email.test(emailRegex)) return res.status(400).json({ message: 'Formato email non valido' });
+
+    // VALIDAZIONE NOME E COGNOME
+    if(first_name.length < 3 || last_name.length < 3) return res.status(400).json({ message: 'Nome e cognome devono avere almeno 3 caratteri' });
+
+    
     const order_date = new Date().toISOString().slice(0, 10);
 
     const data = {
@@ -126,13 +140,8 @@ const create = (req, res) => {
         status
     }
 
-    // 1. VALIDAZIONE DATI
-    if (!first_name || !last_name || !email || !status || !shipping_address || !billing_address || !Array.isArray(items)) {
 
-        return res.status(400).json({ message: "Dati mancanti o prodotti non validi" });
-    }
-
-    //VALIDAZIONE ITEMS
+    // VALIDAZIONE ITEMS
     if (items.length === 0) {
         return res.status(400).json({ message: "Prodotti non validi" });
     }
