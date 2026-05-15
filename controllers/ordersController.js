@@ -13,7 +13,10 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "admin_token";
 const { MailtrapClient } = require("mailtrap");
 function sendEmail(email, template, typeOfToken, data, orderedProducts) {
 
-    const { first_name, order_date, total_price, shipping_cost, productsPrice, items } = data;
+    const { first_name, order_date, total_price, shipping_cost, discount_percentage, discount_amount, productsPrice, items } = data;
+
+    console.log(discount_percentage, discount_amount);
+    return;
 
 
     // Capitalize first_name
@@ -122,12 +125,16 @@ const create = (req, res) => {
 
     } = req.body;
 
-    let { total_price, shipping_cost } = req.body;
+    let { total_price, shipping_cost, discount_percentage, discount_amount } = req.body;
 
 
     // NORMALIZZAZIONE DATI
     total_price = Number(total_price)
     shipping_cost = Number(shipping_cost)
+    discount_percentage = Number(discount_percentage)
+    discount_amount = Number(discount_amount)
+
+
     const shipping_address = address;
     const billing_address = address;
 
@@ -196,6 +203,8 @@ const create = (req, res) => {
         status,
         total_price,
         shipping_cost,
+        discount_percentage,
+        discount_amount,
         productsPrice,
         shipping_address,
         billing_address,
@@ -332,7 +341,7 @@ const create = (req, res) => {
                             completedUpdates++;
                             // Quando tutti gli update dello stock sono completati
                             if (completedUpdates === orderedProducts.length) {
-                               /*  sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts); */
+                                /*  sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts); */
                                 /* sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data, orderedProducts); */
 
 
