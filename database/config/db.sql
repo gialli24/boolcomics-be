@@ -160,3 +160,20 @@ INSERT INTO `products` (`name`, `description`, `genre`, `author`, `release_date`
 -- Populating `category_products` table
 INSERT INTO `category_products` (`product_id`, `category_id`) VALUES 
 (11, 1), (11, 5), (12, 1), (12, 4), (13, 2), (14, 3), (15, 4), (16, 1);
+
+UPDATE `products` SET `image_url` = '/img/products/naruto-vol-1.jpg' WHERE `slug` = 'naruto-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/spider-man-blue.jpg' WHERE `slug` = 'spider-man-blue';
+UPDATE `products` SET `image_url` = '/img/products/v-for-vendetta.jpg' WHERE `slug` = 'v-for-vendetta';
+UPDATE `products` SET `image_url` = '/img/products/berserk-vol-1.jpg' WHERE `slug` = 'berserk-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/dragon-ball-vol-1.jpg' WHERE `slug` = 'dragon-ball-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/sandman-vol-1.jpg' WHERE `slug` = 'sandman-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/kingdom-come.jpg' WHERE `slug` = 'kingdom-come';
+UPDATE `products` SET `image_url` = '/img/products/blankets.jpg' WHERE `slug` = 'blankets';
+UPDATE `products` SET `image_url` = '/img/products/death-note-vol-1.jpg' WHERE `slug` = 'death-note-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/black-hammer-vol-1.jpg' WHERE `slug` = 'black-hammer-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/one-piece-vol-1.jpg' WHERE `slug` = 'one-piece-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/attack-on-titan-vol-1.jpg' WHERE `slug` = 'attack-on-titan-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/batman-year-one.jpg' WHERE `slug` = 'batman-year-one';
+UPDATE `products` SET `image_url` = '/img/products/watchmen.jpg' WHERE `slug` = 'watchmen';
+UPDATE `products` SET `image_url` = '/img/products/the-walking-dead-vol-1.jpg' WHERE `slug` = 'the-walking-dead-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/jujutsu-kaisen-vol-1.jpg' WHERE `slug` = 'jujutsu-kaisen-vol-1';
