@@ -147,3 +147,33 @@ INSERT INTO `discount_codes` (`code`, `discount_percentage`, `valid_from`, `vali
 ('SPRING25', 25.00, '2025-03-01 00:00:00', '2025-05-31 23:59:59', 1),
 ('FALL22', 10.00, '2022-09-01 00:00:00', '2022-11-30 23:59:59', 1),
 ('FREESALE', 50.00, '2023-01-01 00:00:00', '2023-12-31 23:59:59', 1);
+
+-- Populating `products` table
+INSERT INTO `products` (`name`, `description`, `genre`, `author`, `release_date`, `publisher`, `binding`, `ean`, `price`, `original_price`, `stock_quantity`, `image_url`, `slug`) VALUES 
+('One Piece Vol. 1', 'L''inizio dell’avventura di Monkey D. Rufy e della ciurma di Cappello di Paglia.', 'Manga', 'Eiichiro Oda', '1997-07-22', 'Star Comics', 'Brossurato', '9788822611111', 5.20, 5.20, 180, 'https://example.com/onepiece1.jpg', 'one-piece-vol-1'),
+('Attack on Titan Vol. 1', 'L’umanità combatte per sopravvivere contro gigantesche creature chiamate Titani.', 'Manga', 'Hajime Isayama', '2009-03-17', 'Planet Manga', 'Brossurato', '9788869200014', 5.90, 5.90, 140, 'https://example.com/aot1.jpg', 'attack-on-titan-vol-1'),
+('Batman: Year One', 'Le origini di Batman e del commissario Gordon in una Gotham corrotta.', 'Supereroi', 'Frank Miller', '1987-02-01', 'DC Comics', 'Cartonato', '9781401207526', 22.00, 25.00, 35, 'https://example.com/batmanyearone.jpg', 'batman-year-one'),
+('Watchmen', 'Un thriller supereroistico che ha rivoluzionato il mondo del fumetto.', 'Graphic Novel', 'Alan Moore', '1986-09-01', 'DC Comics', 'Cartonato', '9781401245252', 28.00, 30.00, 50, 'https://example.com/watchmen.jpg', 'watchmen'),
+('The Walking Dead Vol. 1', 'Rick Grimes si risveglia in un mondo devastato dagli zombie.', 'Fantasy', 'Robert Kirkman', '2003-10-08', 'Saldapress', 'Brossurato', '9788869190018', 14.90, 16.90, 60, 'https://example.com/twd1.jpg', 'the-walking-dead-vol-1'),
+('Jujutsu Kaisen Vol. 1', 'Yuji Itadori entra nel pericoloso mondo delle maledizioni.', 'Manga', 'Gege Akutami', '2018-07-04', 'Planet Manga', 'Brossurato', '9788891290012', 5.20, 5.20, 170, 'https://example.com/jjk1.jpg', 'jujutsu-kaisen-vol-1');
+
+-- Populating `category_products` table
+INSERT INTO `category_products` (`product_id`, `category_id`) VALUES 
+(11, 1), (11, 5), (12, 1), (12, 4), (13, 2), (14, 3), (15, 4), (16, 1);
+
+UPDATE `products` SET `image_url` = '/img/products/naruto-vol-1.jpg' WHERE `slug` = 'naruto-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/spider-man-blue.jpg' WHERE `slug` = 'spider-man-blue';
+UPDATE `products` SET `image_url` = '/img/products/v-for-vendetta.jpg' WHERE `slug` = 'v-for-vendetta';
+UPDATE `products` SET `image_url` = '/img/products/berserk-vol-1.jpg' WHERE `slug` = 'berserk-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/dragon-ball-vol-1.jpg' WHERE `slug` = 'dragon-ball-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/sandman-vol-1.jpg' WHERE `slug` = 'sandman-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/kingdom-come.jpg' WHERE `slug` = 'kingdom-come';
+UPDATE `products` SET `image_url` = '/img/products/blankets.jpg' WHERE `slug` = 'blankets';
+UPDATE `products` SET `image_url` = '/img/products/death-note-vol-1.jpg' WHERE `slug` = 'death-note-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/black-hammer-vol-1.jpg' WHERE `slug` = 'black-hammer-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/one-piece-vol-1.jpg' WHERE `slug` = 'one-piece-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/attack-on-titan-vol-1.jpg' WHERE `slug` = 'attack-on-titan-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/batman-year-one.jpg' WHERE `slug` = 'batman-year-one';
+UPDATE `products` SET `image_url` = '/img/products/watchmen.jpg' WHERE `slug` = 'watchmen';
+UPDATE `products` SET `image_url` = '/img/products/the-walking-dead-vol-1.jpg' WHERE `slug` = 'the-walking-dead-vol-1';
+UPDATE `products` SET `image_url` = '/img/products/jujutsu-kaisen-vol-1.jpg' WHERE `slug` = 'jujutsu-kaisen-vol-1';
