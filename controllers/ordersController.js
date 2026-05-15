@@ -15,10 +15,6 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
 
     const { first_name, order_date, total_price, shipping_cost, discount_percentage, discount_amount, productsPrice, items } = data;
 
-    console.log(discount_percentage, discount_amount);
-    return;
-
-
     // Capitalize first_name
     const capitalizedName = first_name.charAt(0).toUpperCase() + first_name.slice(1);
 
@@ -54,6 +50,8 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
         .replace('{{order_date}}', formatted_date)
         .replace('{{items}}', productsMarkup)
         .replace('{{subtotal}}', Math.floor(productsPrice * 100) / 100)
+        .replace('{{discount_amount}}', Math.floor(discount_amount * 100) / 100)
+        .replace('{{discount_percentage}}', discount_percentage)
         .replace('{{total_price}}', Math.floor(total_price * 100) / 100)
         .replace('{{shipping_cost}}', Math.floor(shipping_cost * 100) / 100);
 
