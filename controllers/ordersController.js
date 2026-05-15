@@ -50,8 +50,8 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
         .replace('{{order_date}}', formatted_date)
         .replace('{{items}}', productsMarkup)
         .replace('{{subtotal}}', Math.floor(productsPrice * 100) / 100)
-        .replace('{{discount_amount}}', Math.floor(discount_amount * 100) / 100)
-        .replace('{{discount_percentage}}', discount_percentage)
+        .replace('{{discount_amount}}', discount_amount )
+        .replace('{{discount_percentage}}', discount_percentage + '%')
         .replace('{{total_price}}', Math.floor(total_price * 100) / 100)
         .replace('{{shipping_cost}}', Math.floor(shipping_cost * 100) / 100);
 
@@ -186,7 +186,7 @@ const create = (req, res) => {
     // VALIDAZIONE NOME E COGNOME
     if (first_name.length < 3 || last_name.length < 3) return res.status(400).json({ message: 'Nome e cognome devono avere almeno 3 caratteri' });
 
-    const productsPrice = total_price - shipping_cost
+    const productsPrice = total_price - shipping_cost + discount_amount
 
     // VALIDAZIONE SPEDIZIONE GRATUITA 
     if (parseInt(shipping_cost) === 0 && parseInt(productsPrice) <= 50) return res.status(403).json({ message: 'Spedizione gratutita non applicabile' })
@@ -339,7 +339,7 @@ const create = (req, res) => {
                             completedUpdates++;
                             // Quando tutti gli update dello stock sono completati
                             if (completedUpdates === orderedProducts.length) {
-                                /*  sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts); */
+                                sendEmail(email, htmlTemplateUser, TOKEN, data, orderedProducts);
                                 /* sendEmail(ADMIN_EMAIL, htmlTemplateAdmin, ADMIN_TOKEN, data, orderedProducts); */
 
 
