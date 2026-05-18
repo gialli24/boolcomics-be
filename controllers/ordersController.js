@@ -59,6 +59,10 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
         template = template
             .replace('{{discount_amount}}', "-" + discount_amount)
             .replace('{{discount_percentage}}', discount_percentage + '%')
+    } else {
+        template = template
+            .replace('{{discount_amount}}', "0.00€")
+            .replace('{{discount_percentage}}', "")
     }
 
     const client = new MailtrapClient({
