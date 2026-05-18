@@ -30,7 +30,9 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
             <div class="product-box">
                 <div class="product-image">
                     <!-- Placeholder image square -->
-                    <div style="width:100px; height:130px; background-color:#f0f0f0; border:1px solid #ddd;"></div>
+                    <div style="width:100px; height:130px; background-color:#f0f0f0; border:1px solid #ddd;">
+                        <img src="{order.image_url}" alt="${order.name}" />
+                    </div>
                 </div>
                 <div class="product-details">
                     <div class="product-name">${order.name}</div>
@@ -50,7 +52,7 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
         .replace('{{order_date}}', formatted_date)
         .replace('{{items}}', productsMarkup)
         .replace('{{subtotal}}', Math.floor(productsPrice * 100) / 100)
-        .replace('{{discount_amount}}', discount_amount )
+        .replace('{{discount_amount}}', discount_amount)
         .replace('{{discount_percentage}}', discount_percentage + '%')
         .replace('{{total_price}}', Math.floor(total_price * 100) / 100)
         .replace('{{shipping_cost}}', Math.floor(shipping_cost * 100) / 100);
