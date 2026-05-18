@@ -58,7 +58,7 @@ function sendEmail(email, template, typeOfToken, data, orderedProducts) {
     if (discount_amount > 0) {
         template = template
             .replace('{{discount_amount}}', "-" + discount_amount)
-            .replace('{{discount_percentage}}', discount_percentage + '%')
+            .replace('{{discount_percentage}}', "(" + discount_percentage + '%)')
     } else {
         template = template
             .replace('{{discount_amount}}', "0.00€")
